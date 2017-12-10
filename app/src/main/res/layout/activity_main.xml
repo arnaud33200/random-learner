@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="arnaud.radomlearner.MainActivity">
+
+    <RelativeLayout android:id="@+id/main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button_layout"
+        >
+
+        <include android:id="@+id/top_view_guess_word"
+            layout="@layout/view_guess_word"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/middle_layout"
+            />
+
+        <RelativeLayout android:id="@+id/guess_layout"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/color_circle"
+            >
+
+            <TextView android:id="@+id/middle_question_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\?"
+                android:textSize="40dp"
+                android:textColor="@color/white"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout android:id="@+id/middle_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_centerInParent="true">
+        </RelativeLayout>
+
+        <include android:id="@+id/bottom_view_guess_word"
+            layout="@layout/view_guess_word"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/middle_layout"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#000000"
+        >
+
+        <Button android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="#000000"
+            android:text="Next"
+            android:textColor="#ffff"
+            />
+
+    </RelativeLayout>
+
+</android.widget.RelativeLayout>

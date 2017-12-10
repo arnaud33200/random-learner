@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/adjective_menu"
+        android:title="ADJ"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/verb_menu"
+        android:title="VERB"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/hiragana_menu"
+        android:title="Hiranaga"
+        app:showAsAction="always"/>
+
+</menu>
