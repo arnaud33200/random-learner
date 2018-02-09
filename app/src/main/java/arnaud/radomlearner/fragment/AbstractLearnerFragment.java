@@ -31,8 +31,15 @@ public abstract class AbstractLearnerFragment extends Fragment {
 
     public void setWordMap(HashMap<String, String> wordMap) {
         this.wordMap = wordMap;
+        if (this.wordMap == null) {
+            this.wordMap = new HashMap<>();
+        }
         updateDisplayWithNewWordMap();
     }
 
     protected abstract void updateDisplayWithNewWordMap();
+
+    public HashMap<String, String> getWordMap() {
+        return wordMap;
+    }
 }

@@ -18,6 +18,7 @@ import java.util.Random;
 import arnaud.radomlearner.GuessWordView;
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.RandomLearnerApp;
+import arnaud.radomlearner.helper.DataHelper;
 
 /**
  * Created by arnaud on 2018/02/06.
@@ -53,14 +54,6 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
             }
         });
 
-        nextButton = rootView.findViewById(R.id.next_button);
-//        nextButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                nextButtonClickAction();
-//            }
-//        });
-
         nextButtonClickAction();
 
         return rootView;
@@ -77,6 +70,9 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     }
 
     private void nextButtonClickAction() {
+        if (wordMap == null) {
+            return;
+        }
 
         Boolean revealAction = true;
         if (topGuessWordView.getHideMode()) {
@@ -96,10 +92,9 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
             return;
         }
 
-        final int min = 0;
         final int max = wordMap.size()-1;
-        final int randomIndex = new Random().nextInt((max - min) + 1) + min;
-        final int randomBool = new Random().nextInt(2);
+        final int randomIndex = DataHelper.getRadomNumber(0, max);
+        final int randomBool = DataHelper.getRadomNumber(0, 1);
 
         String adj = (String) wordMap.keySet().toArray()[randomIndex];
         String translation = wordMap.get(adj);

@@ -1,5 +1,6 @@
 package arnaud.radomlearner;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -8,10 +9,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.HashMap;
 
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
+import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,13 +28,32 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        currentFragment = new TopDownCardFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.body_contain_layout, currentFragment);
-        transaction.commit();
+        replaceCurrentFragment(new TopDownCardFragment());
+
+        findViewById(R.id.top_down_card_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { replaceCurrentFragment(new TopDownCardFragment()); }
+        });
+
+        findViewById(R.id.quizz_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { replaceCurrentFragment(new QuizzFragment()); }
+        });
 
         HashMap<String, String> wordMap = initAdjectiveDict();
         currentFragment.setWordMap(wordMap);
+    }
+
+    private void replaceCurrentFragment(AbstractLearnerFragment fragment) {
+        HashMap<String, String> wordMap = null;
+        if (currentFragment != null) {
+            wordMap = currentFragment.getWordMap();
+        }
+        currentFragment = fragment;
+        fragment.setWordMap(wordMap);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.body_contain_layout, currentFragment);
+        transaction.commit();
     }
 
     @Override

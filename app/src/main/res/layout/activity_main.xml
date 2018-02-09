@@ -31,7 +31,7 @@
             android:textColor="#ffff"
             />
 
-        <Button android:id="@+id/next_button"
+        <Button android:id="@+id/quizz_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"

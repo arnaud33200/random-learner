@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    >
+
+    <TextView android:id="@+id/question_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/button_layout"
+        android:text="Question Here but it can be a very long question"
+        />
+
+    <LinearLayout android:id="@+id/button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+
+        <Button android:id="@+id/button_1"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="answer 1"
+            />
+
+        <Button android:id="@+id/button_2"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="answer 2"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>
