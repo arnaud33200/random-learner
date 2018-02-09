@@ -47,8 +47,8 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements View.OnC
         userAnswer = answer != null ? answer : "";
         this.listener = listener;
         questionTextView.setText(quizzRow.question);
-        answer1Button.setText(quizzRow.answer1);
-        answer2Button.setText(quizzRow.answer2);
+        answer1Button.setText(quizzRow.answerArray.get(0));
+        answer2Button.setText(quizzRow.answerArray.get(1));
         updateButtonsUiAfterAnswer();
     }
 
@@ -71,16 +71,17 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements View.OnC
         int button2ColorRes = R.color.not_answer;
         float button2Alpha = 1.0f;
 
+        float otherAnswerAlpha = 0.3f;
 
         if (userAnswer.length() > 0) {
             int answerColorRes = userAnswer.equals(mQuizzRow.correctAnswer) ? R.color.correct_answer : R.color.bad_answer;
 
-            if (userAnswer.equals(mQuizzRow.answer1)) {
+            if (userAnswer.equals(mQuizzRow.answerArray.get(0))) {
                 button1ColorRes = answerColorRes;
-                button2Alpha = 0.5f;
+                button2Alpha = otherAnswerAlpha;
             } else {
                 button2ColorRes = answerColorRes;
-                button1Alpha = 0.5f;
+                button1Alpha = otherAnswerAlpha;
             }
         }
 

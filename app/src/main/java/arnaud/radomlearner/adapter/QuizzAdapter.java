@@ -17,25 +17,22 @@ import arnaud.radomlearner.helper.DataHelper;
 
 public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implements QuizzViewHolder.ButtonActionListener {
 
+    public static final int NUMBER_OF_BUTTON = 2;
+
     public static class QuizzRow {
         public String question;
         public String correctAnswer;
-        public String answer1;
-        public String answer2;
+        public ArrayList<String> answerArray;
 
-        public QuizzRow(String question, String correct, String bad) {
+        public QuizzRow(String question, String correct) {
             this.question = question;
             this.correctAnswer = correct;
+            this.answerArray = new ArrayList<>();
+        }
 
-            int random = DataHelper.getRadomNumber(0, 1);
-            if (random == 0) {
-                answer1 = correct;
-                answer2 = bad;
-            }
-            else {
-                answer2 = correct;
-                answer1 = bad;
-            }
+        public QuizzRow(String question, String correct, ArrayList<String> answerArray) {
+            this(question, correct);
+            this.answerArray = answerArray;
         }
     }
 
@@ -52,25 +49,32 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
 
         ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
         while (keyArray.size() > 0) {
-            int i = DataHelper.getRadomNumber(0, keyArray.size()-1);
-            String question1 = keyArray.remove(i);
-            String anwer1 = wordMap.get(question1);
 
-            String anwer2 = "";
-            if (keyArray.size() > 0) {
-                i = DataHelper.getRadomNumber(0, keyArray.size()-1);
-                String question2 = keyArray.remove(i);
-                anwer2 = wordMap.get(question2);
-                QuizzRow row2 = new QuizzRow(question2, anwer2, anwer1);
-                mQuizzRowArrayList.add(row2);
-            } else {
-                i = DataHelper.getRadomNumber(0, mQuizzRowArrayList.size()-1);
-                QuizzRow row2 = mQuizzRowArrayList.get(i);
-                anwer2 = row2.correctAnswer;
+            ArrayList<String> answerArray = new ArrayList<>();
+
+            int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
+            String question = keyArray.remove(random);
+            String answer = wordMap.get(question);
+            QuizzRow quizzRow = new QuizzRow(question, answer);
+            answerArray.add(answer);
+
+            for (int i=0; i<NUMBER_OF_BUTTON-1; ++i) {
+                String a = "";
+                if (keyArray.size() > 0) {
+                    int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
+                    String q = keyArray.get(r);
+                    a = wordMap.get(q);
+                } else {
+                    int r = DataHelper.getRadomNumber(0, mQuizzRowArrayList.size()-1);
+                    QuizzRow row = mQuizzRowArrayList.get(r);
+                    a = row.correctAnswer;
+                }
+                int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+                answerArray.add(insertIndex, a);
             }
 
-            QuizzRow row1 = new QuizzRow(question1, anwer1, anwer2);
-            mQuizzRowArrayList.add(row1);
+            quizzRow.answerArray = answerArray;
+            mQuizzRowArrayList.add(quizzRow);
         }
 
         notifyDataSetChanged();
