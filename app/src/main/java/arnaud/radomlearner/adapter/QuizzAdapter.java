@@ -15,24 +15,36 @@ import arnaud.radomlearner.helper.DataHelper;
  * Created by arnaud on 2018/02/08.
  */
 
-public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> {
+public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implements QuizzViewHolder.ButtonActionListener {
 
     public static class QuizzRow {
         public String question;
         public String correctAnswer;
-        public String badAnswer;
+        public String answer1;
+        public String answer2;
 
         public QuizzRow(String question, String correct, String bad) {
             this.question = question;
             this.correctAnswer = correct;
-            this.badAnswer = bad;
+
+            int random = DataHelper.getRadomNumber(0, 1);
+            if (random == 0) {
+                answer1 = correct;
+                answer2 = bad;
+            }
+            else {
+                answer2 = correct;
+                answer1 = bad;
+            }
         }
     }
 
     private ArrayList<QuizzRow> mQuizzRowArrayList;
+    private HashMap<String, String> mUserAnswerMap;
 
     public QuizzAdapter() {
         mQuizzRowArrayList = new ArrayList<>();
+        mUserAnswerMap = new HashMap<>();
     }
 
     public void setWordMap(HashMap<String, String> wordMap) {
@@ -74,11 +86,17 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> {
     @Override
     public void onBindViewHolder(QuizzViewHolder holder, int position) {
         QuizzRow quizzRow = mQuizzRowArrayList.get(position);
-        holder.setViewWithQuizzRow(quizzRow);
+        String answer = mUserAnswerMap.get(quizzRow.question);
+        holder.setViewWithQuizzRow(quizzRow, answer, this);
     }
 
     @Override
     public int getItemCount() {
         return mQuizzRowArrayList.size();
+    }
+
+    @Override
+    public void onUserAnswerAction(String question, String answer) {
+        mUserAnswerMap.put(question, answer);
     }
 }

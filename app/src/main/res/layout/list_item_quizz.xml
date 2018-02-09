@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:paddingLeft="30dp"
     >
 
     <TextView android:id="@+id/question_text_view"
@@ -14,24 +17,28 @@
         />
 
     <LinearLayout android:id="@+id/button_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_alignParentRight="true"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:weightSum="2"
         >
 
         <Button android:id="@+id/button_1"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="answer 1"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
             />
 
         <Button android:id="@+id/button_2"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="answer 2"
+            android:layout_weight="1"
             />
 
     </LinearLayout>
