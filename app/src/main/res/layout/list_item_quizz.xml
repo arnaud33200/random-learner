@@ -32,13 +32,17 @@
             android:text="answer 1"
             android:layout_weight="1"
             android:layout_marginRight="10dp"
+            android:background="@color/not_answer"
+            android:textColor="@color/white"
             />
 
         <Button android:id="@+id/button_2"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="answer 2"
+            android:background="@color/not_answer"
             android:layout_weight="1"
+            android:textColor="@color/white"
             />
 
     </LinearLayout>

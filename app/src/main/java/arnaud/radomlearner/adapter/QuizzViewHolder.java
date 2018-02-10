@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.RandomLearnerApp;
-import arnaud.radomlearner.helper.DataHelper;
 
 /**
  * Created by arnaud on 2018/02/08.
@@ -18,7 +17,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements View.OnC
     private QuizzAdapter.QuizzRow mQuizzRow;
 
     public interface ButtonActionListener {
-        void onUserAnswerAction(String question, String answer);
+        void onUserAnswerAction(String question, String answer, boolean correct);
     }
 
     TextView questionTextView;
@@ -60,8 +59,9 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements View.OnC
         Button button = (Button) view;
         this.userAnswer = button.getText().toString();
         updateButtonsUiAfterAnswer();
+        boolean correct = this.userAnswer.equals(mQuizzRow.correctAnswer);
         if (listener != null) {
-            listener.onUserAnswerAction(mQuizzRow.question, userAnswer);
+            listener.onUserAnswerAction(mQuizzRow.question, userAnswer, correct);
         }
     }
 
@@ -71,7 +71,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements View.OnC
         int button2ColorRes = R.color.not_answer;
         float button2Alpha = 1.0f;
 
-        float otherAnswerAlpha = 0.3f;
+        float otherAnswerAlpha = 0.2f;
 
         if (userAnswer.length() > 0) {
             int answerColorRes = userAnswer.equals(mQuizzRow.correctAnswer) ? R.color.correct_answer : R.color.bad_answer;

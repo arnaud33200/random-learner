@@ -17,6 +17,10 @@ import arnaud.radomlearner.helper.DataHelper;
 
 public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implements QuizzViewHolder.ButtonActionListener {
 
+    public interface UserAnswerListener {
+        void onUserAnswerChanged(int totalAnswer, int totalCorrect);
+    }
+
     public static final int NUMBER_OF_BUTTON = 2;
 
     public static class QuizzRow {
@@ -36,16 +40,22 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
         }
     }
 
+    public UserAnswerListener listener;
+
     private ArrayList<QuizzRow> mQuizzRowArrayList;
     private HashMap<String, String> mUserAnswerMap;
+    private int numberOfCorrectAnswer;
 
     public QuizzAdapter() {
         mQuizzRowArrayList = new ArrayList<>();
         mUserAnswerMap = new HashMap<>();
+        numberOfCorrectAnswer = 0;
     }
 
-    public void setWordMap(HashMap<String, String> wordMap) {
+    public void setWordMap(HashMap<String, String> wordMap, boolean revert) {
         mQuizzRowArrayList = new ArrayList<>();
+        mUserAnswerMap = new HashMap<>();
+        numberOfCorrectAnswer = 0;
 
         ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
         while (keyArray.size() > 0) {
@@ -56,21 +66,33 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
             String question = keyArray.remove(random);
             String answer = wordMap.get(question);
             QuizzRow quizzRow = new QuizzRow(question, answer);
-            answerArray.add(answer);
+            if (revert) {
+                quizzRow = new QuizzRow(answer, question);
+                answerArray.add(question);
+            } else {
+                answerArray.add(answer);
+            }
 
             for (int i=0; i<NUMBER_OF_BUTTON-1; ++i) {
                 String a = "";
+                String q = "";
                 if (keyArray.size() > 0) {
                     int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
-                    String q = keyArray.get(r);
+                    q = keyArray.get(r);
                     a = wordMap.get(q);
                 } else {
                     int r = DataHelper.getRadomNumber(0, mQuizzRowArrayList.size()-1);
                     QuizzRow row = mQuizzRowArrayList.get(r);
                     a = row.correctAnswer;
+                    q = row.question;
                 }
                 int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
-                answerArray.add(insertIndex, a);
+                if (revert) {
+                    answerArray.add(insertIndex, q);
+                } else {
+                    answerArray.add(insertIndex, a);
+                }
+
             }
 
             quizzRow.answerArray = answerArray;
@@ -78,6 +100,10 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
         }
 
         notifyDataSetChanged();
+
+        if (listener != null) {
+            listener.onUserAnswerChanged(mUserAnswerMap.size(), numberOfCorrectAnswer);
+        }
     }
 
     @Override
@@ -100,7 +126,13 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
     }
 
     @Override
-    public void onUserAnswerAction(String question, String answer) {
+    public void onUserAnswerAction(String question, String answer, boolean correct) {
         mUserAnswerMap.put(question, answer);
+        if (correct) {
+            numberOfCorrectAnswer++;
+        }
+        if (listener != null) {
+            listener.onUserAnswerChanged(mUserAnswerMap.size(), numberOfCorrectAnswer);
+        }
     }
 }
