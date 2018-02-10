@@ -32,6 +32,13 @@
                 android:textSize="8dp"
                 />
 
+            <Button android:id="@+id/bad_button"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:text="bad"
+                android:textSize="8dp"
+                />
+
         </LinearLayout>
 
         <TextView android:id="@+id/status_text_view"

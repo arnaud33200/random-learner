@@ -18,7 +18,7 @@ import arnaud.radomlearner.helper.DataHelper;
 public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implements QuizzViewHolder.ButtonActionListener {
 
     public interface UserAnswerListener {
-        void onUserAnswerChanged(int totalAnswer, int totalCorrect);
+        void onUserAnswerChanged(int totalQuestion, int totalAnswer, int totalCorrect);
     }
 
     public static final int NUMBER_OF_BUTTON = 2;
@@ -52,13 +52,26 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
         numberOfCorrectAnswer = 0;
     }
 
+    public void setWordMapOnlyKeepBad(HashMap<String, String> wordMap, boolean revert) {
+        HashMap<String, String> badWordMap = new HashMap<>();
+        for (String question : mUserAnswerMap.keySet()) {
+            String answer = mUserAnswerMap.get(question);
+            String correct = wordMap.get(question);
+            if (correct != null && answer.equals(correct) == false) {
+                badWordMap.put(question, answer);
+            }
+        }
+        setWordMap(badWordMap, revert);
+    }
+
     public void setWordMap(HashMap<String, String> wordMap, boolean revert) {
+
         mQuizzRowArrayList = new ArrayList<>();
         mUserAnswerMap = new HashMap<>();
         numberOfCorrectAnswer = 0;
 
         ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
-        while (keyArray.size() > 0) {
+        while (keyArray.size() > 0 && wordMap.size() >= NUMBER_OF_BUTTON) {
 
             ArrayList<String> answerArray = new ArrayList<>();
 
@@ -102,7 +115,7 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
         notifyDataSetChanged();
 
         if (listener != null) {
-            listener.onUserAnswerChanged(mUserAnswerMap.size(), numberOfCorrectAnswer);
+            listener.onUserAnswerChanged(mQuizzRowArrayList.size(), mUserAnswerMap.size(), numberOfCorrectAnswer);
         }
     }
 
@@ -132,7 +145,7 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
             numberOfCorrectAnswer++;
         }
         if (listener != null) {
-            listener.onUserAnswerChanged(mUserAnswerMap.size(), numberOfCorrectAnswer);
+            listener.onUserAnswerChanged(mQuizzRowArrayList.size(), mUserAnswerMap.size(), numberOfCorrectAnswer);
         }
     }
 }

@@ -24,9 +24,11 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
     private QuizzAdapter mAdapter;
     private Button revertButton;
     private Button resetButton;
+    private Button badButton;
     private TextView statusTextView;
 
     private boolean revert;
+
 
     @Override
     protected int getMainLayoutRes() {
@@ -41,7 +43,6 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
         revert = false;
 
         statusTextView = rootView.findViewById(R.id.status_text_view);
-        onUserAnswerChanged(0, 0);
 
         mAdapter = new QuizzAdapter();
         mAdapter.listener = this;
@@ -65,7 +66,19 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
             }
         });
 
+        badButton = rootView.findViewById(R.id.bad_button);
+        badButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                badButtonClickAction();
+            }
+        });
+
         return rootView;
+    }
+
+    private void badButtonClickAction() {
+        mAdapter.setWordMapOnlyKeepBad(wordMap, revert);
     }
 
     private void revertButtonClickAction() {
@@ -85,8 +98,8 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
     }
 
     @Override
-    public void onUserAnswerChanged(int totalAnswer, int totalCorrect) {
-        String statusText = "" + totalAnswer + " / " + wordMap.size();
+    public void onUserAnswerChanged(int totalQuestion, int totalAnswer, int totalCorrect) {
+        String statusText = "" + totalAnswer + " / " + totalQuestion;
         if (totalAnswer > 0) {
             statusText = statusText + " (" + totalCorrect + " correct)";
         }
