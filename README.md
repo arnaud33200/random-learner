@@ -6,6 +6,13 @@ two type of screen:
 * top dow card:
 * 2 answer quiz:
 
+# Version
+
+## version 1
+* top down random card for all the dict
+* random on top/down to guess.
+* infinite
+
 # Process
 
 * select a type of quizz (card, 2 answer, ...)
