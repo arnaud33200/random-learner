@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.helper.DataHelper;
+import arnaud.radomlearner.model.Quiz;
 
 /**
  * Created by arnaud on 2018/02/08.
@@ -23,52 +25,37 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
 
     public static final int NUMBER_OF_BUTTON = 2;
 
-    public static class QuizzRow {
-        public String question;
-        public String correctAnswer;
-        public ArrayList<String> answerArray;
-
-        public QuizzRow(String question, String correct) {
-            this.question = question;
-            this.correctAnswer = correct;
-            this.answerArray = new ArrayList<>();
-        }
-
-        public QuizzRow(String question, String correct, ArrayList<String> answerArray) {
-            this(question, correct);
-            this.answerArray = answerArray;
-        }
-    }
-
     public UserAnswerListener listener;
 
-    private ArrayList<QuizzRow> mQuizzRowArrayList;
-    private HashMap<String, String> mUserAnswerMap;
-    private int numberOfCorrectAnswer;
+    private ArrayList<Quiz> mQuizzRowArrayList;
+
+    private HashMap<String, Quiz> mUserCorrectAnswerMap;
+    private HashMap<String, Quiz> mUserBadAnswerMap;
 
     public QuizzAdapter() {
         mQuizzRowArrayList = new ArrayList<>();
-        mUserAnswerMap = new HashMap<>();
-        numberOfCorrectAnswer = 0;
+        mUserCorrectAnswerMap = new HashMap<>();
+        mUserBadAnswerMap = new HashMap<>();
     }
 
     public void setWordMapOnlyKeepBad(HashMap<String, String> wordMap, boolean revert) {
         HashMap<String, String> badWordMap = new HashMap<>();
-        for (String question : mUserAnswerMap.keySet()) {
-            String answer = mUserAnswerMap.get(question);
-            String correct = wordMap.get(question);
-            if (correct != null && answer.equals(correct) == false) {
-                badWordMap.put(question, answer);
+
+        for (Quiz quizzRow : mUserBadAnswerMap.values()) {
+            if (revert) {
+                badWordMap.put(quizzRow.correctAnswer, quizzRow.question);
+            }
+            else {
+                badWordMap.put(quizzRow.question, quizzRow.correctAnswer);
             }
         }
         setWordMap(badWordMap, revert);
     }
 
     public void setWordMap(HashMap<String, String> wordMap, boolean revert) {
-
         mQuizzRowArrayList = new ArrayList<>();
-        mUserAnswerMap = new HashMap<>();
-        numberOfCorrectAnswer = 0;
+        mUserCorrectAnswerMap = new HashMap<>();
+        mUserBadAnswerMap = new HashMap<>();
 
         ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
         while (keyArray.size() > 0 && wordMap.size() >= NUMBER_OF_BUTTON) {
@@ -78,9 +65,9 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
             int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
             String question = keyArray.remove(random);
             String answer = wordMap.get(question);
-            QuizzRow quizzRow = new QuizzRow(question, answer);
+            Quiz quizzRow = new Quiz(question, answer);
             if (revert) {
-                quizzRow = new QuizzRow(answer, question);
+                quizzRow = new Quiz(answer, question);
                 answerArray.add(question);
             } else {
                 answerArray.add(answer);
@@ -95,9 +82,9 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
                     a = wordMap.get(q);
                 } else {
                     int r = DataHelper.getRadomNumber(0, mQuizzRowArrayList.size()-1);
-                    QuizzRow row = mQuizzRowArrayList.get(r);
-                    a = row.correctAnswer;
-                    q = row.question;
+                    Quiz row = mQuizzRowArrayList.get(r);
+                    a = revert ? row.question : row.correctAnswer;
+                    q = revert ? row.correctAnswer : row.question;
                 }
                 int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
                 if (revert) {
@@ -114,10 +101,23 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
 
         notifyDataSetChanged();
 
+        sendUserAnswerChanged();
+    }
+
+    private void sendUserAnswerChanged() {
         if (listener != null) {
-            listener.onUserAnswerChanged(mQuizzRowArrayList.size(), mUserAnswerMap.size(), numberOfCorrectAnswer);
+            int totalAnswer = mUserBadAnswerMap.size() + mUserCorrectAnswerMap.size();
+            listener.onUserAnswerChanged(mQuizzRowArrayList.size(), totalAnswer, mUserCorrectAnswerMap.size());
         }
     }
+
+//    private String getUserAnswerForQuestion(Quiz question) {
+//        String answer = mUserCorrectAnswerMap.get(question);
+//        if (answer == null) {
+//            answer = mUserBadAnswerMap.get(question);
+//        }
+//        return answer;
+//    }
 
     @Override
     public QuizzViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -128,9 +128,8 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
 
     @Override
     public void onBindViewHolder(QuizzViewHolder holder, int position) {
-        QuizzRow quizzRow = mQuizzRowArrayList.get(position);
-        String answer = mUserAnswerMap.get(quizzRow.question);
-        holder.setViewWithQuizzRow(quizzRow, answer, this);
+        Quiz quizzRow = mQuizzRowArrayList.get(position);
+        holder.setViewWithQuizzRow(quizzRow, this);
     }
 
     @Override
@@ -139,13 +138,14 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
     }
 
     @Override
-    public void onUserAnswerAction(String question, String answer, boolean correct) {
-        mUserAnswerMap.put(question, answer);
+    public void onUserAnswerAction(Quiz mQuizzRow) {
+        boolean correct = mQuizzRow.isCorrectAnswer();
         if (correct) {
-            numberOfCorrectAnswer++;
+            mUserCorrectAnswerMap.put(mQuizzRow.question, mQuizzRow);
+        } else {
+            mUserBadAnswerMap.put(mQuizzRow.question, mQuizzRow);
         }
-        if (listener != null) {
-            listener.onUserAnswerChanged(mQuizzRowArrayList.size(), mUserAnswerMap.size(), numberOfCorrectAnswer);
-        }
+
+        sendUserAnswerChanged();
     }
 }
