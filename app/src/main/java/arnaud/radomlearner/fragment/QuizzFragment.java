@@ -11,8 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.adapter.QuizzAdapter;
+import arnaud.radomlearner.model.Quiz;
 
 /**
  * Created by arnaud on 2018/02/08.
@@ -30,10 +33,11 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
     private boolean revert;
 
 
-    @Override
-    protected int getMainLayoutRes() {
+    @Override protected int getMainLayoutRes() {
         return R.layout.quizz_fragment;
     }
+
+    @Override protected int getNumberOfAnswer() { return 2; }
 
     @Nullable
     @Override
@@ -43,14 +47,6 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
         revert = false;
 
         statusTextView = rootView.findViewById(R.id.status_text_view);
-
-        mAdapter = new QuizzAdapter();
-        mAdapter.listener = this;
-
-        mRecyclerView = rootView.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.setWordMap(wordMap, revert);
 
         resetButton = rootView.findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -74,27 +70,37 @@ public class QuizzFragment extends AbstractLearnerFragment implements QuizzAdapt
             }
         });
 
+        if (mAdapter == null) {
+            mAdapter = new QuizzAdapter();
+        }
+        mAdapter.setListener(this);
+
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mAdapter);
+
         return rootView;
     }
 
     private void badButtonClickAction() {
-        mAdapter.setWordMapOnlyKeepBad(wordMap, revert);
+//        mAdapter.setWordMapOnlyKeepBad(wordMap, revert);
     }
 
     private void revertButtonClickAction() {
         revert = revert == false;
-        mAdapter.setWordMap(wordMap, revert);
+        mAdapter.setWordMap(generateQuizArray());
     }
 
     private void resetButtonClickAction() {
-        mAdapter.setWordMap(wordMap, revert);
+        mAdapter.setWordMap(generateQuizArray());
     }
 
     @Override
-    protected void updateDisplayWithNewWordMap() {
-        if (mAdapter != null) {
-            mAdapter.setWordMap(wordMap, revert);
+    protected void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList) {
+        if (mAdapter == null) {
+            mAdapter = new QuizzAdapter();
         }
+        mAdapter.setWordMap(quizArrayList);
     }
 
     @Override

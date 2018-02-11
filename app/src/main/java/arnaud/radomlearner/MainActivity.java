@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
         if (currentFragment != null) {
             wordMap = currentFragment.getWordMap();
         }
+        if (wordMap == null) {
+            wordMap = initAdjectiveDict();
+        }
+
         currentFragment = fragment;
         fragment.setWordMap(wordMap);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

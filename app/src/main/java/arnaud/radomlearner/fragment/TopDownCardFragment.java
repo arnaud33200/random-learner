@@ -1,9 +1,7 @@
 package arnaud.radomlearner.fragment;
 
-import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +10,13 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.Random;
+import java.util.ArrayList;
 
 import arnaud.radomlearner.GuessWordView;
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.RandomLearnerApp;
 import arnaud.radomlearner.helper.DataHelper;
+import arnaud.radomlearner.model.Quiz;
 
 /**
  * Created by arnaud on 2018/02/06.
@@ -28,10 +26,12 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
 
     private GuessWordView topGuessWordView;
     private GuessWordView bottomGuessWordView;
-    private Button nextButton;
+
+    private int nextIndex;
 
     private RelativeLayout guessLayout;
     private TextView questionTextView;
+    private ArrayList<Quiz> mQuizArrayList;
 
     @Override
     protected int getMainLayoutRes() { return R.layout.top_down_card_fragment; }
@@ -39,6 +39,11 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
+
+        nextIndex = 0;
+        if (mQuizArrayList == null) {
+            mQuizArrayList = new ArrayList<>();
+        }
 
         topGuessWordView = new GuessWordView(rootView.findViewById(R.id.top_view_guess_word));
         topGuessWordView.setColorMode();
@@ -60,7 +65,8 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     }
 
     @Override
-    protected void updateDisplayWithNewWordMap() {
+    protected void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList) {
+        mQuizArrayList = quizArrayList;
         if (topGuessWordView == null || bottomGuessWordView == null) {
             return;
         }
@@ -69,8 +75,14 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         nextButtonClickAction();
     }
 
+    @Override
+    protected int getNumberOfAnswer() {
+        return 1;
+    }
+
     private void nextButtonClickAction() {
-        if (wordMap == null) {
+        if (mQuizArrayList == null || mQuizArrayList.size() == 0) {
+            nextIndex = 0;
             return;
         }
 
@@ -92,15 +104,13 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
             return;
         }
 
-        final int max = wordMap.size()-1;
-        final int randomIndex = DataHelper.getRadomNumber(0, max);
+        Quiz quiz = mQuizArrayList.get(nextIndex);
+        nextIndex++;
+
         final int randomBool = DataHelper.getRadomNumber(0, 1);
 
-        String adj = (String) wordMap.keySet().toArray()[randomIndex];
-        String translation = wordMap.get(adj);
-
-        topGuessWordView.setTextAndDisplayMode(adj, randomBool == 1);
-        bottomGuessWordView.setTextAndDisplayMode(translation, randomBool == 0);
+        topGuessWordView.setTextAndDisplayMode(quiz.question, randomBool == 1);
+        bottomGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, randomBool == 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             updateMiddleGuestLayout();

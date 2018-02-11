@@ -25,7 +25,7 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
 
     public static final int NUMBER_OF_BUTTON = 2;
 
-    public UserAnswerListener listener;
+    private UserAnswerListener listener;
 
     private ArrayList<Quiz> mQuizzRowArrayList;
 
@@ -49,58 +49,21 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> implemen
                 badWordMap.put(quizzRow.question, quizzRow.correctAnswer);
             }
         }
-        setWordMap(badWordMap, revert);
+//        setWordMap(badWordMap, revert);
     }
 
-    public void setWordMap(HashMap<String, String> wordMap, boolean revert) {
-        mQuizzRowArrayList = new ArrayList<>();
+    public void setWordMap(ArrayList<Quiz> quizRowArrayList) {
+        mQuizzRowArrayList = quizRowArrayList;
+
         mUserCorrectAnswerMap = new HashMap<>();
         mUserBadAnswerMap = new HashMap<>();
 
-        ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
-        while (keyArray.size() > 0 && wordMap.size() >= NUMBER_OF_BUTTON) {
-
-            ArrayList<String> answerArray = new ArrayList<>();
-
-            int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
-            String question = keyArray.remove(random);
-            String answer = wordMap.get(question);
-            Quiz quizzRow = new Quiz(question, answer);
-            if (revert) {
-                quizzRow = new Quiz(answer, question);
-                answerArray.add(question);
-            } else {
-                answerArray.add(answer);
-            }
-
-            for (int i=0; i<NUMBER_OF_BUTTON-1; ++i) {
-                String a = "";
-                String q = "";
-                if (keyArray.size() > 0) {
-                    int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
-                    q = keyArray.get(r);
-                    a = wordMap.get(q);
-                } else {
-                    int r = DataHelper.getRadomNumber(0, mQuizzRowArrayList.size()-1);
-                    Quiz row = mQuizzRowArrayList.get(r);
-                    a = revert ? row.question : row.correctAnswer;
-                    q = revert ? row.correctAnswer : row.question;
-                }
-                int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
-                if (revert) {
-                    answerArray.add(insertIndex, q);
-                } else {
-                    answerArray.add(insertIndex, a);
-                }
-
-            }
-
-            quizzRow.answerArray = answerArray;
-            mQuizzRowArrayList.add(quizzRow);
-        }
-
         notifyDataSetChanged();
+        sendUserAnswerChanged();
+    }
 
+    public void setListener(UserAnswerListener listener) {
+        this.listener = listener;
         sendUserAnswerChanged();
     }
 
