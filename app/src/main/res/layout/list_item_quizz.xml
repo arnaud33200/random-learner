@@ -16,35 +16,12 @@
         android:text="Question Here but it can be a very long question"
         />
 
-    <LinearLayout android:id="@+id/button_layout"
+    <include android:id="@+id/button_layout"
+        layout="@layout/view_two_side_slider_button"
         android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginLeft="10dp"
         android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        >
-
-        <Button android:id="@+id/button_1"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="answer 1"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:background="@color/not_answer"
-            android:textColor="@color/white"
-            />
-
-        <Button android:id="@+id/button_2"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="answer 2"
-            android:background="@color/not_answer"
-            android:layout_weight="1"
-            android:textColor="@color/white"
-            />
-
-    </LinearLayout>
+        />
 
 </RelativeLayout>
