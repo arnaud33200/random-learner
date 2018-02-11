@@ -10,16 +10,24 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
+import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements QuizzAnswerListener {
 
     private AbstractLearnerFragment currentFragment;
+
+    private Button revertButton;
+    private Button resetButton;
+    private Button badButton;
+    private TextView statusTextView;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -28,13 +36,35 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        statusTextView = findViewById(R.id.status_text_view);
+
+        resetButton = findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { currentFragment.resetQuizArray(); }
+        });
+
+        revertButton = findViewById(R.id.revert_button);
+        revertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { currentFragment.swapQuestionAnswer(); }
+        });
+
+        badButton = findViewById(R.id.bad_button);
+        badButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentFragment.resetWithOnlyBadUserAnswer();
+            }
+        });
+
+
         replaceCurrentFragment(new TopDownCardFragment());
 
         findViewById(R.id.top_down_card_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { replaceCurrentFragment(new TopDownCardFragment()); }
         });
-
         findViewById(R.id.quizz_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { replaceCurrentFragment(new QuizzFragment()); }
@@ -54,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         currentFragment = fragment;
+        currentFragment.listener = this;
+
         fragment.setWordMap(wordMap);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.body_contain_layout, currentFragment);
@@ -90,6 +122,18 @@ public class MainActivity extends AppCompatActivity {
 
         currentFragment.setWordMap(wordMap);
         return true;
+    }
+
+    @Override
+    public void onUserAnswerChanged(int totalQuestion, int totalAnswer, int totalCorrect) {
+        if (statusTextView == null) {
+            return;
+        }
+        String statusText = "" + totalAnswer + " / " + totalQuestion;
+//        if (totalAnswer > 0) {
+//            statusText = statusText + " (" + totalCorrect + " correct)";
+//        }
+        statusTextView.setText(statusText);
     }
 
     private HashMap<String, String> initAdjectiveDict() {

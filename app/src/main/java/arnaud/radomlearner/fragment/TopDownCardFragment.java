@@ -27,7 +27,7 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     private GuessWordView topGuessWordView;
     private GuessWordView bottomGuessWordView;
 
-    private int nextIndex;
+    private int currentIndex;
 
     private RelativeLayout guessLayout;
     private TextView questionTextView;
@@ -40,7 +40,7 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
-        nextIndex = 0;
+        currentIndex = 0;
         if (mQuizArrayList == null) {
             mQuizArrayList = new ArrayList<>();
         }
@@ -82,7 +82,7 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
 
     private void nextButtonClickAction() {
         if (mQuizArrayList == null || mQuizArrayList.size() == 0) {
-            nextIndex = 0;
+            currentIndex = 0;
             return;
         }
 
@@ -100,12 +100,15 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         if (revealAction) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 updateMiddleGuestLayout();
+                Quiz quiz = mQuizArrayList.get(currentIndex);
+                quiz.userAnswer = quiz.correctAnswer;
+                onUserAnswerAction(quiz);
             }
             return;
         }
 
-        Quiz quiz = mQuizArrayList.get(nextIndex);
-        nextIndex++;
+        currentIndex++;
+        Quiz quiz = mQuizArrayList.get(currentIndex);
 
         final int randomBool = DataHelper.getRadomNumber(0, 1);
 

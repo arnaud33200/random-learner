@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import arnaud.radomlearner.action_interface.QuizzAnswerListener;
+import arnaud.radomlearner.action_interface.UserActionListener;
 import arnaud.radomlearner.helper.DataHelper;
 import arnaud.radomlearner.model.Quiz;
 
@@ -17,10 +19,16 @@ import arnaud.radomlearner.model.Quiz;
  * Created by arnaud on 2018/02/06.
  */
 
-public abstract class AbstractLearnerFragment extends Fragment {
+public abstract class AbstractLearnerFragment extends Fragment implements UserActionListener {
 
     private HashMap<String, String> wordMap;
-    protected boolean revert = false;
+    private boolean revert = false;
+
+    private HashMap<String, Quiz> mUserCorrectAnswerMap;
+    private HashMap<String, Quiz> mUserBadAnswerMap;
+    private ArrayList<Quiz> mQuizArrayList;
+
+    public QuizzAnswerListener listener;
 
     @Nullable
     @Override
@@ -41,22 +49,51 @@ public abstract class AbstractLearnerFragment extends Fragment {
         if (this.wordMap == null) {
             this.wordMap = new HashMap<>();
         }
-        ArrayList<Quiz> quizArrayList = generateQuizArray();
+        ArrayList<Quiz> quizArrayList = generateQuizArray(wordMap);
         updateDisplayWithNewWordMap(quizArrayList);
+        sendUserAnswerChanged();
     }
 
-    public ArrayList<Quiz> generateQuizArray() {
-        ArrayList<Quiz> quizArrayList = new ArrayList<>();
+    public void swapQuestionAnswer() {
+        revert = revert == false;
+        resetQuizArray();
+    }
+
+    public void resetQuizArray() {
+        setWordMap(wordMap);
+    }
+
+    public void resetWithOnlyBadUserAnswer() {
+        HashMap<String, String> badWordMap = new HashMap<>();
+        for (Quiz quizzRow : mUserBadAnswerMap.values()) {
+            if (revert) {
+                badWordMap.put(quizzRow.correctAnswer, quizzRow.question);
+            }
+            else {
+                badWordMap.put(quizzRow.question, quizzRow.correctAnswer);
+            }
+        }
+        ArrayList<Quiz> quizArrayList = generateQuizArray(badWordMap);
+        updateDisplayWithNewWordMap(quizArrayList);
+        sendUserAnswerChanged();
+    }
+
+    private ArrayList<Quiz> generateQuizArray(HashMap<String, String> wordMapGenerated) {
+        // reset answer at this point
+        mUserCorrectAnswerMap = new HashMap<>();
+        mUserBadAnswerMap = new HashMap<>();
+
+        mQuizArrayList = new ArrayList<>();
 
         int numberOfAnswer = getNumberOfAnswer();
-        ArrayList<String> keyArray = new ArrayList<>(wordMap.keySet());
-        while (keyArray.size() > 0 && wordMap.size() >= numberOfAnswer) {
+        ArrayList<String> keyArray = new ArrayList<>(wordMapGenerated.keySet());
+        while (keyArray.size() > 0 && wordMapGenerated.size() >= numberOfAnswer) {
 
             ArrayList<String> answerArray = new ArrayList<>();
 
             int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
             String question = keyArray.remove(random);
-            String answer = wordMap.get(question);
+            String answer = wordMapGenerated.get(question);
             Quiz quizzRow = new Quiz(question, answer);
             if (revert) {
                 quizzRow = new Quiz(answer, question);
@@ -71,10 +108,10 @@ public abstract class AbstractLearnerFragment extends Fragment {
                 if (keyArray.size() > 0) {
                     int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
                     q = keyArray.get(r);
-                    a = wordMap.get(q);
+                    a = wordMapGenerated.get(q);
                 } else {
-                    int r = DataHelper.getRadomNumber(0, quizArrayList.size()-1);
-                    Quiz row = quizArrayList.get(r);
+                    int r = DataHelper.getRadomNumber(0, mQuizArrayList.size()-1);
+                    Quiz row = mQuizArrayList.get(r);
                     a = revert ? row.question : row.correctAnswer;
                     q = revert ? row.correctAnswer : row.question;
                 }
@@ -88,12 +125,36 @@ public abstract class AbstractLearnerFragment extends Fragment {
             }
 
             quizzRow.answerArray = answerArray;
-            quizArrayList.add(quizzRow);
+            mQuizArrayList.add(quizzRow);
         }
-        return quizArrayList;
+        return mQuizArrayList;
     }
 
     public HashMap<String, String> getWordMap() {
         return wordMap;
     }
+
+// ~~~~~~~~~~~~
+
+    @Override
+    public void onUserAnswerAction(Quiz mQuizzRow) {
+        boolean correct = mQuizzRow.isCorrectAnswer();
+        if (correct) {
+            mUserCorrectAnswerMap.put(mQuizzRow.question, mQuizzRow);
+        } else {
+            mUserBadAnswerMap.put(mQuizzRow.question, mQuizzRow);
+        }
+
+        sendUserAnswerChanged();
+    }
+
+    private void sendUserAnswerChanged() {
+        if (listener == null) {
+            return;
+        }
+        int totalAnswer = mUserBadAnswerMap.size() + mUserCorrectAnswerMap.size();
+        listener.onUserAnswerChanged(mQuizArrayList.size(), totalAnswer, mUserCorrectAnswerMap.size());
+    }
+
+
 }

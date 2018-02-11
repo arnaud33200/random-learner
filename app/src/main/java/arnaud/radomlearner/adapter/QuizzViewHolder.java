@@ -2,12 +2,11 @@ package arnaud.radomlearner.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import arnaud.radomlearner.R;
-import arnaud.radomlearner.RandomLearnerApp;
 import arnaud.radomlearner.TwoSideSliderButtonView;
+import arnaud.radomlearner.action_interface.UserActionListener;
 import arnaud.radomlearner.model.Quiz;
 
 /**
@@ -21,11 +20,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
     private TextView questionTextView;
     private TwoSideSliderButtonView twoSideSliderButtonView;
 
-    public interface ButtonActionListener {
-        void onUserAnswerAction(Quiz mQuizzRow);
-    }
-
-    ButtonActionListener listener;
+    UserActionListener listener;
 
     public QuizzViewHolder(View itemView) {
         super(itemView);
@@ -36,7 +31,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
         twoSideSliderButtonView.listener = this;
     }
 
-    public void setViewWithQuizzRow(Quiz quizzRow, ButtonActionListener listener) {
+    public void setViewWithQuizzRow(Quiz quizzRow, UserActionListener listener) {
         mQuizzRow = quizzRow;
         this.listener = listener;
         questionTextView.setText(quizzRow.question);
