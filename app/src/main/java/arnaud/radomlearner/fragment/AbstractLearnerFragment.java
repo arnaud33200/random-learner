@@ -21,6 +21,8 @@ import arnaud.radomlearner.model.Quiz;
 
 public abstract class AbstractLearnerFragment extends Fragment implements UserActionListener {
 
+    private static final int NUMBER_QUESTION_PER_EXERCISE = 30;
+
     private HashMap<String, String> wordMap;
     private boolean revert = false;
 
@@ -126,6 +128,9 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
             quizzRow.answerArray = answerArray;
             mQuizArrayList.add(quizzRow);
+            if (mQuizArrayList.size() >= NUMBER_QUESTION_PER_EXERCISE) {
+                break;
+            }
         }
         return mQuizArrayList;
     }
