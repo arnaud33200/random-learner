@@ -161,5 +161,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         listener.onUserAnswerChanged(mQuizArrayList.size(), totalAnswer, mUserCorrectAnswerMap.size());
     }
 
-
+    public boolean getRevert() {
+        return revert;
+    }
 }

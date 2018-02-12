@@ -46,13 +46,6 @@ public class GuessWordView {
         textView.setTextColor(RandomLearnerApp.sharedInstance.getApplicationContext().getColor(R.color.white));
     }
 
-    public void textViewClickAction() {
-        if (hideMode == false) {
-            return;
-        }
-        this.setDisplayMod();
-    }
-
     private void setDisplayMod() {
         hideMode = false;
         textView.setAlpha(1.f);
@@ -60,7 +53,16 @@ public class GuessWordView {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,30);
     }
 
-    private void setHideMode() {
+    public void textViewClickAction() {
+        if (hideMode == false) {
+            return;
+        }
+        this.setDisplayMod();
+    }
+
+
+
+    public void setHideMode() {
         hideMode = true;
 //        textView.setAlpha(0.6f);
         textView.setText(". . .");

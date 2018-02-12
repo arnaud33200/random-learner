@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import arnaud.radomlearner.CircleSymbolButton;
 import arnaud.radomlearner.GuessWordView;
 import arnaud.radomlearner.R;
 import arnaud.radomlearner.RandomLearnerApp;
@@ -27,10 +28,11 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     private GuessWordView topGuessWordView;
     private GuessWordView bottomGuessWordView;
 
-    private int currentIndex;
+    private CircleSymbolButton leftButton;
+    private CircleSymbolButton centralButton;
+    private CircleSymbolButton rightButton;
 
-    private RelativeLayout guessLayout;
-    private TextView questionTextView;
+    private int currentIndex;
     private ArrayList<Quiz> mQuizArrayList;
 
     @Override
@@ -49,17 +51,25 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         topGuessWordView.setColorMode();
         bottomGuessWordView = new GuessWordView(rootView.findViewById(R.id.bottom_view_guess_word));
 
-        guessLayout = rootView.findViewById(R.id.guess_layout);
-        questionTextView = rootView.findViewById(R.id.middle_question_textview);
-
-        rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nextButtonClickAction();
-            }
+        leftButton = rootView.findViewById(R.id.left_button);
+        leftButton.setSymbolText("✔");
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) { buttonClickAction(true); }
         });
 
-        nextButtonClickAction();
+        centralButton = rootView.findViewById(R.id.central_button);
+        centralButton.setSymbolText("?");
+        centralButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) { centralButtonClickAction(); }
+        });
+
+        rightButton = rootView.findViewById(R.id.right_button);
+        rightButton.setSymbolText("✖");
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) { buttonClickAction(false); }
+        });
+
+        prepareNextGuest();
 
         return rootView;
     }
@@ -67,12 +77,13 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     @Override
     protected void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList) {
         mQuizArrayList = quizArrayList;
+        currentIndex = 0;
         if (topGuessWordView == null || bottomGuessWordView == null) {
             return;
         }
         topGuessWordView.setTextAndDisplayMode("", false);
         bottomGuessWordView.setTextAndDisplayMode("", false);
-        nextButtonClickAction();
+        prepareNextGuest();
     }
 
     @Override
@@ -80,59 +91,92 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         return 1;
     }
 
-    private void nextButtonClickAction() {
+    private void buttonClickAction(boolean correct) {
+        if (checkNeedToReveal()) {
+            return;
+        }
+
+        Quiz quiz = mQuizArrayList.get(currentIndex);
+        quiz.userAnswer = correct ? quiz.correctAnswer : "WRONG";
+        onUserAnswerAction(quiz);
+
+        currentIndex++;
+        prepareNextGuest();
+    }
+
+    private void prepareNextGuest() {
         if (mQuizArrayList == null || mQuizArrayList.size() == 0) {
             currentIndex = 0;
             return;
         }
 
-        Boolean revealAction = true;
+        if (currentIndex >= mQuizArrayList.size()) {
+            centralButton.setVisibility(View.GONE);
+            leftButton.setVisibility(View.GONE);
+            rightButton.setVisibility(View.GONE);
+            topGuessWordView.setHideMode();
+            bottomGuessWordView.setHideMode();
+            return;
+        }
+        Quiz quiz = mQuizArrayList.get(currentIndex);
+
+//        final int randomBool = DataHelper.getRadomNumber(0, 1);
+
+        if (getRevert()) {
+            topGuessWordView.setTextAndDisplayMode(quiz.question, true);
+            bottomGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
+        } else {
+            topGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
+            bottomGuessWordView.setTextAndDisplayMode(quiz.question, true);
+        }
+
+        updateMiddleGuestLayout();
+    }
+
+    private void centralButtonClickAction() {
+        if (checkNeedToReveal() == false) {
+            return;
+        }
+
         if (topGuessWordView.getHideMode()) {
             topGuessWordView.textViewClickAction();
         }
         else if (bottomGuessWordView.getHideMode()) {
             bottomGuessWordView.textViewClickAction();
         }
-        else {
-            revealAction = false;
-        }
 
-        if (revealAction) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                updateMiddleGuestLayout();
-                Quiz quiz = mQuizArrayList.get(currentIndex);
-                quiz.userAnswer = quiz.correctAnswer;
-                onUserAnswerAction(quiz);
-            }
-            return;
-        }
-
-        currentIndex++;
-        Quiz quiz = mQuizArrayList.get(currentIndex);
-
-        final int randomBool = DataHelper.getRadomNumber(0, 1);
-
-        topGuessWordView.setTextAndDisplayMode(quiz.question, randomBool == 1);
-        bottomGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, randomBool == 0);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            updateMiddleGuestLayout();
-        }
+        updateMiddleGuestLayout();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+    private boolean checkNeedToReveal() {
+        return (topGuessWordView.getHideMode() || bottomGuessWordView.getHideMode());
+    }
+
     private void updateMiddleGuestLayout() {
-        guessLayout.setVisibility(View.VISIBLE);
+
+        CircleSymbolButton.Position position = CircleSymbolButton.Position.MIDDLE;
         if (topGuessWordView.getHideMode()) {
-            questionTextView.setTextColor(RandomLearnerApp.getContext().getColor(R.color.black));
-            guessLayout.setBackground(RandomLearnerApp.getContext().getDrawable(R.drawable.white_circle));
+            position = CircleSymbolButton.Position.TOP;
         }
         else if (bottomGuessWordView.getHideMode()) {
-            questionTextView.setTextColor(RandomLearnerApp.getContext().getColor(R.color.white));
-            guessLayout.setBackground(RandomLearnerApp.getContext().getDrawable(R.drawable.color_circle));
+            position = CircleSymbolButton.Position.BOTTOM;
+        }
+
+        if (checkNeedToReveal()) {
+            centralButton.setVisibility(View.VISIBLE);
+            leftButton.setVisibility(View.GONE);
+            rightButton.setVisibility(View.GONE);
+
         }
         else {
-            guessLayout.setVisibility(View.INVISIBLE);
+            centralButton.setVisibility(View.GONE);
+            leftButton.setVisibility(View.VISIBLE);
+            rightButton.setVisibility(View.VISIBLE);
+
         }
+
+        centralButton.updateView(position);
+        leftButton.updateView(position);
+        rightButton.updateView(position);
     }
 }
