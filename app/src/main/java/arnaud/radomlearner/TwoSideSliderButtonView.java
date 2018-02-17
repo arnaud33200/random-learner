@@ -19,6 +19,10 @@ import android.widget.TextView;
 
 public class TwoSideSliderButtonView {
 
+    public enum Position {
+        LEFT, MIDDLE, RIGHT;
+    }
+
     RelativeLayout leftLayout;
     RelativeLayout rightLayout;
 
@@ -29,7 +33,19 @@ public class TwoSideSliderButtonView {
     TextView leftTextView;
     TextView rightTextView;
 
+    int correctBackgroundRes;
+    int badBackgroundRes;
+
+    Position currentPosition;
+
+    boolean neutralColor;
+    boolean onlyOneAction;
+
     boolean leftCorrect;
+
+    public void setOnlyOneAnswer(boolean b) {
+        onlyOneAction = b;
+    }
 
     public interface SideSliderListener {
         void onSliderClickAction(String answer);
@@ -37,6 +53,18 @@ public class TwoSideSliderButtonView {
     public SideSliderListener listener;
 
     public TwoSideSliderButtonView(View rootView) {
+        this(rootView, false);
+    }
+
+    public TwoSideSliderButtonView(View rootView, boolean neutralColor) {
+
+        currentPosition = Position.MIDDLE;
+
+        onlyOneAction = true;
+        this.neutralColor = neutralColor;
+
+        correctBackgroundRes = neutralColor ? R.drawable.round_neutral_background : R.drawable.round_correct_background;
+        badBackgroundRes = neutralColor ? R.drawable.round_neutral_background : R.drawable.round_wrong_background;
 
         leftLayout = rootView.findViewById(R.id.left_layout);
         leftLayout.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +112,7 @@ public class TwoSideSliderButtonView {
     }
 
     public void setToInitialState() {
+        currentPosition = Position.MIDDLE;
         leftLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { leftLayoutClickAction(); }
@@ -110,19 +139,30 @@ public class TwoSideSliderButtonView {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     public void animationSlideButton(final boolean left, boolean animation) {
 
-        leftLayout.setOnClickListener(null);
-        rightLayout.setOnClickListener(null);
+        Position newPosition = left ? Position.LEFT : Position.RIGHT;
+        if (currentPosition == newPosition) {
+            return;
+        }
+        currentPosition = newPosition;
+
+        if (onlyOneAction) {
+            leftLayout.setOnClickListener(null);
+            rightLayout.setOnClickListener(null);
+        }
 
         int animationTime = animation ? 300 : 0;
 
         int textColor = RandomLearnerApp.getContextColor(R.color.white);
+        int normalColor = RandomLearnerApp.getContextColor(R.color.not_answer);
         int backgroundRes = 0;
         if (left) {
             leftTextView.setTextColor(textColor);
-            backgroundRes = leftCorrect ? R.drawable.round_correct_background : R.drawable.round_wrong_background;
+            rightTextView.setTextColor(normalColor);
+            backgroundRes = leftCorrect ? correctBackgroundRes : badBackgroundRes;
         } else {
+            leftTextView.setTextColor(normalColor);
             rightTextView.setTextColor(textColor);
-            backgroundRes = leftCorrect == false ? R.drawable.round_correct_background : R.drawable.round_wrong_background;
+            backgroundRes = leftCorrect == false ? correctBackgroundRes : badBackgroundRes;
         }
 
 
@@ -130,8 +170,33 @@ public class TwoSideSliderButtonView {
 
         centralView.setBackgroundColor(RandomLearnerApp.getContextColor(R.color.transparent));
 //        int centralWidth = centralView.getWidth();
-        int width = leftLayout.getWidth();
-        animateView(0, -width, animationTime, new ValueAnimator.AnimatorUpdateListener() {
+        final int width = leftLayout.getWidth();
+        animateMovableView(true, (left?width:0), animationTime);
+        animateMovableView(false, (left?0:width), animationTime);
+//
+        animateView(100,40, animationTime, new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Integer value = (Integer) animation.getAnimatedValue();
+                float alpha = value / 100.f;
+                float oppositeValue = value + width;
+                if (left) {
+                    rightTextView.setAlpha(alpha);
+
+                } else {
+                    leftTextView.setAlpha(alpha);
+                }
+            }
+        });
+    }
+
+    private void animateMovableView(final boolean left, int value, int animationTime) {
+        int startingValue = ((RelativeLayout.LayoutParams) movableView.getLayoutParams()).rightMargin;
+        if (left) {
+            startingValue = ((RelativeLayout.LayoutParams) movableView.getLayoutParams()).leftMargin;
+        }
+
+        animateView(startingValue, -value, animationTime, new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 Integer value = (Integer) animation.getAnimatedValue();
@@ -142,19 +207,6 @@ public class TwoSideSliderButtonView {
                     layoutParam.rightMargin = value;
                 }
                 movableView.setLayoutParams(layoutParam);
-            }
-        });
-//
-        animateView(100,40, animationTime, new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                Integer value = (Integer) animation.getAnimatedValue();
-                float alpha = value / 100.f;
-                if (left) {
-                    rightTextView.setAlpha(alpha);
-                } else {
-                    leftTextView.setAlpha(alpha);
-                }
             }
         });
     }

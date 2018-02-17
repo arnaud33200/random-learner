@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/button_layout"
+        android:textSize="18sp"
         android:text="Question Here but it can be a very long question"
         />
 

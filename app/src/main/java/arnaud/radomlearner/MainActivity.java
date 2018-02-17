@@ -1,11 +1,13 @@
 package arnaud.radomlearner;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +22,7 @@ import arnaud.radomlearner.fragment.AbstractLearnerFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 
-public class MainActivity extends AppCompatActivity implements QuizzAnswerListener {
+public class MainActivity extends AppCompatActivity implements QuizzAnswerListener, TwoSideSliderButtonView.SideSliderListener {
 
     private AbstractLearnerFragment currentFragment;
 
@@ -28,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     private Button resetButton;
     private Button badButton;
     private TextView statusTextView;
+
+    private int limit = -1;
+
+    private TwoSideSliderButtonView twoSideSliderButtonView;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -58,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             }
         });
 
+        twoSideSliderButtonView = new TwoSideSliderButtonView(findViewById(R.id.switch_button), true);
+        twoSideSliderButtonView.setOnlyOneAnswer(false);
+        twoSideSliderButtonView.setText("ALL", "30", "");
+        twoSideSliderButtonView.animationSlideButton(true, false);
+        twoSideSliderButtonView.listener = this;
 
         replaceCurrentFragment(new TopDownCardFragment());
 
@@ -71,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         });
 
         HashMap<String, String> wordMap = initAdjectiveDict();
-        currentFragment.setWordMap(wordMap);
+        currentFragment.setWordMap(wordMap, limit);
     }
 
     private void replaceCurrentFragment(AbstractLearnerFragment fragment) {
@@ -86,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         currentFragment = fragment;
         currentFragment.listener = this;
 
-        fragment.setWordMap(wordMap);
+        fragment.setWordMap(wordMap, limit);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.body_contain_layout, currentFragment);
         transaction.commit();
@@ -123,8 +134,14 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             return false;
         }
 
-        currentFragment.setWordMap(wordMap);
+        currentFragment.setWordMap(wordMap, limit);
         return true;
+    }
+
+    @Override
+    public void onSliderClickAction(String answer) {
+        limit = answer.equals("ALL") ? -1 : 30;
+        currentFragment.resetQuizArray(limit);
     }
 
     @Override

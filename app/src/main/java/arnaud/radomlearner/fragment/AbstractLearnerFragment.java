@@ -25,6 +25,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
     private HashMap<String, String> wordMap;
     private boolean revert = false;
+    private int limit;
 
     private HashMap<String, Quiz> mUserCorrectAnswerMap;
     private HashMap<String, Quiz> mUserBadAnswerMap;
@@ -46,7 +47,8 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     protected abstract void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList);
     protected abstract int getNumberOfAnswer();
 
-    public void setWordMap(HashMap<String, String> wordMap) {
+    public void setWordMap(HashMap<String, String> wordMap, int limit) {
+        this.limit = limit;
         this.wordMap = wordMap;
         if (this.wordMap == null) {
             this.wordMap = new HashMap<>();
@@ -61,8 +63,12 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         resetQuizArray();
     }
 
+    public void resetQuizArray(int limit) {
+        setWordMap(wordMap, limit);
+    }
+
     public void resetQuizArray() {
-        setWordMap(wordMap);
+        setWordMap(wordMap, limit);
     }
 
     public void resetWithOnlyBadUserAnswer() {
@@ -128,7 +134,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
             quizzRow.answerArray = answerArray;
             mQuizArrayList.add(quizzRow);
-            if (mQuizArrayList.size() >= NUMBER_QUESTION_PER_EXERCISE) {
+            if (limit > 0 && mQuizArrayList.size() >= limit) {
                 break;
             }
         }

@@ -62,6 +62,9 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         centralButton.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View view) { centralButtonClickAction(); }
         });
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) { centralButtonClickAction(); }
+        });
 
         rightButton = rootView.findViewById(R.id.right_button);
         rightButton.setSymbolText("✖");

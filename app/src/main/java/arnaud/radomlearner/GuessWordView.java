@@ -21,12 +21,12 @@ public class GuessWordView {
         mRootView = rootView;
 
         textView = mRootView.findViewById(R.id.text_view);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                textViewClickAction();
-            }
-        });
+//        textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                textViewClickAction();
+//            }
+//        });
 
         hideMode = false;
     }
