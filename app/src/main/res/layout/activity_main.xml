@@ -105,6 +105,15 @@
             android:textColor="#ffff"
             />
 
+        <Button android:id="@+id/match_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="#000000"
+            android:text="Match"
+            android:textColor="#ffff"
+            />
+
     </LinearLayout>
 
 </android.widget.RelativeLayout>

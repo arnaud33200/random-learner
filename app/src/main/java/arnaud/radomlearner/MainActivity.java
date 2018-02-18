@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
+import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 
@@ -79,6 +80,10 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         findViewById(R.id.quizz_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { replaceCurrentFragment(new QuizzFragment()); }
+        });
+        findViewById(R.id.match_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { replaceCurrentFragment(new MatchElementQuizFragment()); }
         });
 
         HashMap<String, String> wordMap = initAdjectiveDict();
