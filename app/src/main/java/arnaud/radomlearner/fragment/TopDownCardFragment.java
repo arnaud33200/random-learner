@@ -37,6 +37,9 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     private ArrayList<Quiz> mQuizArrayList;
 
     @Override
+    public boolean needToDisplayTopStatusBar() { return true; }
+
+    @Override
     protected int getMainLayoutRes() { return R.layout.top_down_card_fragment; }
 
     @Override

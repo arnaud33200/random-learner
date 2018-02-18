@@ -38,10 +38,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
 
     // init view
         Pair<String, String> correctPair = mQuizzRow.getFirsCorrectPair();
-        questionTextView.setText(correctPair.first);
-        if (quizzRow.answerArray.size() == 0) {
-            quizzRow.answerArray.add("dfs");
-        }
+        questionTextView.setText(quizzRow.questionArray.get(0));
         twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), correctPair.second);
         twoSideSliderButtonView.setToInitialState();
 

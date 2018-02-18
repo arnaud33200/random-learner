@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <RelativeLayout android:id="@+id/central_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@color/bad_answer"
+            android:layout_centerHorizontal="true"
+            />
+
+        <RelativeLayout android:id="@+id/left_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/central_layout"
+            android:background="@color/colorAccent"
+            >
+
+            <TextView android:id="@+id/question_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Question"
+                android:textSize="18dp"
+                android:textColor="@color/white"
+                android:gravity="end"
+                android:layout_marginRight="30dp"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout android:id="@+id/right_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/central_layout"
+            >
+
+            <TextView android:id="@+id/answer_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="ANSWER"
+                android:textSize="18dp"
+                android:layout_marginLeft="30dp"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

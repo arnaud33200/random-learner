@@ -13,12 +13,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
 
 import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
+import arnaud.radomlearner.fragment.ListQuestionAnswerFragment;
 import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
     private AbstractLearnerFragment currentFragment;
 
+    private RelativeLayout statusBarLayout;
     private Button revertButton;
     private Button resetButton;
     private Button badButton;
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        statusBarLayout = findViewById(R.id.quizz_status_layout);
 
         statusTextView = findViewById(R.id.status_text_view);
 
@@ -73,6 +78,10 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
         replaceCurrentFragment(new TopDownCardFragment());
 
+        findViewById(R.id.list_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { replaceCurrentFragment(new ListQuestionAnswerFragment()); }
+        });
         findViewById(R.id.top_down_card_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) { replaceCurrentFragment(new TopDownCardFragment()); }
@@ -106,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.body_contain_layout, currentFragment);
         transaction.commit();
+
+        statusBarLayout.setVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -3,6 +3,7 @@ package arnaud.radomlearner.fragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
     protected abstract int getMainLayoutRes();
     protected abstract void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList);
+    public abstract boolean needToDisplayTopStatusBar();
     protected abstract int getNumberOfQuestion();
     protected abstract int getNumberOfAnswer();
 
@@ -113,7 +115,6 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
             ArrayList<String> answerArray = new ArrayList<>();
             HashMap<String, String> correctMap = new HashMap<>();
 
-
             if (revert) {
                 questionArray.add(originalAnswer);
                 answerArray.add(originalQuestion);
@@ -144,8 +145,14 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
                 int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
                 if (questionArray.size() < numberOfQuestion) {
-                    if (revert) { questionArray.add(insertIndex, a); }
-                    else { questionArray.add(insertIndex, q); }
+                    if (revert) {
+                        questionArray.add(insertIndex, a);
+                        correctMap.put(a,q);
+                    }
+                    else {
+                        questionArray.add(insertIndex, q);
+                        correctMap.put(q,a);
+                    }
                 }
 
                 insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
@@ -154,18 +161,21 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                     else { answerArray.add(insertIndex, a); }
                 }
 
-                if (revert) { correctMap.put(a,q); }
-                else { correctMap.put(q,a); }
-
                 i++;
             }
 
             Quiz quizzRow = new Quiz(correctMap, questionArray, answerArray);
             mQuizArrayList.add(quizzRow);
+
             if (limit > 0 && mQuizArrayList.size() >= limit) {
                 break;
             }
         }
+
+//        for (Quiz q : mQuizArrayList) {
+//            Log.d("QUESTION", q.questionArray.get());
+//        }
+
         return mQuizArrayList;
     }
 

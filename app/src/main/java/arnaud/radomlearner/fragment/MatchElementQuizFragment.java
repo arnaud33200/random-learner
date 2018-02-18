@@ -23,6 +23,9 @@ public class MatchElementQuizFragment extends AbstractLearnerFragment {
     private int currentIndex = 0;
 
     @Override
+    public boolean needToDisplayTopStatusBar() { return true; }
+
+    @Override
     protected int getMainLayoutRes() {
         return R.layout.fragment_match_element_quizz;
     }

@@ -87,6 +87,15 @@
         android:gravity="center"
         >
 
+        <Button android:id="@+id/list_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="#000000"
+            android:text="List"
+            android:textColor="#ffff"
+            />
+
         <Button android:id="@+id/top_down_card_button"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

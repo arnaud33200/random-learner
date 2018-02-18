@@ -3,6 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent_AA">#AAFF4081</color>
+
+    <color name="grey_back_text">#DDDDDD</color>
 
     <color name="transparent">#00FFFFFF</color>
     <color name="white">#FFFFFF</color>
