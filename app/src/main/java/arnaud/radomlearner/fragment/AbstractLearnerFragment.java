@@ -45,6 +45,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
     protected abstract int getMainLayoutRes();
     protected abstract void updateDisplayWithNewWordMap(ArrayList<Quiz> quizArrayList);
+    protected abstract int getNumberOfQuestion();
     protected abstract int getNumberOfAnswer();
 
     public void setWordMap(HashMap<String, String> wordMap, int limit) {
@@ -75,10 +76,10 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         HashMap<String, String> badWordMap = new HashMap<>();
         for (Quiz quizzRow : mUserBadAnswerMap.values()) {
             if (revert) {
-                badWordMap.put(quizzRow.correctAnswer, quizzRow.question);
+                badWordMap.put(quizzRow.correctAnswer, quizzRow.correctQuestion);
             }
             else {
-                badWordMap.put(quizzRow.question, quizzRow.correctAnswer);
+                badWordMap.put(quizzRow.correctQuestion, quizzRow.correctAnswer);
             }
         }
         ArrayList<Quiz> quizArrayList = generateQuizArray(badWordMap);
@@ -93,24 +94,25 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
         mQuizArrayList = new ArrayList<>();
 
+        int numberOfQuestion = getNumberOfQuestion();
         int numberOfAnswer = getNumberOfAnswer();
+
         ArrayList<String> keyArray = new ArrayList<>(wordMapGenerated.keySet());
         while (keyArray.size() > 0 && wordMapGenerated.size() >= numberOfAnswer) {
 
+            int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
+            String originalQuestion = keyArray.remove(random);
+            String originalAnswer = wordMapGenerated.get(originalQuestion);
+
+            ArrayList<String> questionArray = new ArrayList<>();
             ArrayList<String> answerArray = new ArrayList<>();
 
-            int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
-            String question = keyArray.remove(random);
-            String answer = wordMapGenerated.get(question);
-            Quiz quizzRow = new Quiz(question, answer);
-            if (revert) {
-                quizzRow = new Quiz(answer, question);
-                answerArray.add(question);
-            } else {
-                answerArray.add(answer);
-            }
+            questionArray.add(originalQuestion);
+            answerArray.add(originalAnswer);
 
-            for (int i=0; i<numberOfAnswer-1; ++i) {
+            int i=0;
+            while (questionArray.size() < numberOfQuestion || answerArray.size() < numberOfAnswer) {
+            // Add Question
                 String a = "";
                 String q = "";
                 if (keyArray.size() > 0) {
@@ -120,19 +122,25 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                 } else {
                     int r = DataHelper.getRadomNumber(0, mQuizArrayList.size()-1);
                     Quiz row = mQuizArrayList.get(r);
-                    a = revert ? row.question : row.correctAnswer;
-                    q = revert ? row.correctAnswer : row.question;
-                }
-                int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
-                if (revert) {
-                    answerArray.add(insertIndex, q);
-                } else {
-                    answerArray.add(insertIndex, a);
+                    a = revert ? row.correctQuestion : row.correctAnswer;
+                    q = revert ? row.correctAnswer : row.correctQuestion;
                 }
 
+                int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+                if (questionArray.size() < numberOfQuestion) {
+                    if (revert) { questionArray.add(insertIndex, a); }
+                    else { questionArray.add(insertIndex, q); }
+                }
+
+                if (answerArray.size() < numberOfAnswer) {
+                    if (revert) { answerArray.add(insertIndex, q); }
+                    else { answerArray.add(insertIndex, a); }
+                }
+
+                i++;
             }
 
-            quizzRow.answerArray = answerArray;
+            Quiz quizzRow = new Quiz(originalQuestion, originalAnswer, questionArray, answerArray);
             mQuizArrayList.add(quizzRow);
             if (limit > 0 && mQuizArrayList.size() >= limit) {
                 break;
@@ -151,9 +159,9 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     public void onUserAnswerAction(Quiz mQuizzRow) {
         boolean correct = mQuizzRow.isCorrectAnswer();
         if (correct) {
-            mUserCorrectAnswerMap.put(mQuizzRow.question, mQuizzRow);
+            mUserCorrectAnswerMap.put(mQuizzRow.correctQuestion, mQuizzRow);
         } else {
-            mUserBadAnswerMap.put(mQuizzRow.question, mQuizzRow);
+            mUserBadAnswerMap.put(mQuizzRow.correctQuestion, mQuizzRow);
         }
 
         sendUserAnswerChanged();

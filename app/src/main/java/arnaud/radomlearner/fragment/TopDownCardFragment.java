@@ -90,6 +90,11 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
     }
 
     @Override
+    protected int getNumberOfQuestion() {
+        return 1;
+    }
+
+    @Override
     protected int getNumberOfAnswer() {
         return 1;
     }
@@ -126,11 +131,11 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
 //        final int randomBool = DataHelper.getRadomNumber(0, 1);
 
         if (getRevert()) {
-            topGuessWordView.setTextAndDisplayMode(quiz.question, true);
+            topGuessWordView.setTextAndDisplayMode(quiz.correctQuestion, true);
             bottomGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
         } else {
             topGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
-            bottomGuessWordView.setTextAndDisplayMode(quiz.question, true);
+            bottomGuessWordView.setTextAndDisplayMode(quiz.correctQuestion, true);
         }
 
         updateMiddleGuestLayout();

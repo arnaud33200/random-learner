@@ -2,24 +2,33 @@ package arnaud.radomlearner.model;
 
 import java.util.ArrayList;
 
+import arnaud.radomlearner.helper.DataHelper;
+
 /**
  * Created by arnaud on 2018/02/10.
  */
 
 public class Quiz {
 
-    public String question;
-
-    public String userAnswer;
-    public String correctAnswer;
-
+    public ArrayList<String> questionArray;
     public ArrayList<String> answerArray;
 
-    public Quiz(String question, String correct) {
-        this.question = question;
-        this.correctAnswer = correct;
+    public String userAnswer;
+
+    public String correctQuestion;
+    public String correctAnswer;
+
+    public Quiz(String correctQuestion, String correctAnswer, ArrayList questionArray, ArrayList answerArray) {
+        this.questionArray = questionArray;
+        this.answerArray = answerArray;
+        this.correctQuestion = correctQuestion;
+        this.correctAnswer = correctAnswer;
         this.userAnswer = "";
-        this.answerArray = new ArrayList<>();
+    }
+
+    public String getRandomQuestion() {
+        int r = DataHelper.getRadomNumber(0, questionArray.size()-1);
+        return questionArray.get(r);
     }
 
     public boolean isCorrectAnswer() {

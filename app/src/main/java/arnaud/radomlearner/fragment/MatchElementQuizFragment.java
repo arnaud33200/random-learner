@@ -22,6 +22,11 @@ public class MatchElementQuizFragment extends AbstractLearnerFragment {
     }
 
     @Override
+    protected int getNumberOfQuestion() {
+        return 3;
+    }
+
+    @Override
     protected int getNumberOfAnswer() {
         return 3;
     }

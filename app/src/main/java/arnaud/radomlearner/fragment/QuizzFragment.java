@@ -35,6 +35,7 @@ public class QuizzFragment extends AbstractLearnerFragment {
     }
 
     @Override protected int getNumberOfAnswer() { return 2; }
+    @Override protected int getNumberOfQuestion() { return 1; }
 
     @Nullable
     @Override

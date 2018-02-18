@@ -34,7 +34,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
     public void setViewWithQuizzRow(Quiz quizzRow, UserActionListener listener) {
         mQuizzRow = quizzRow;
         this.listener = listener;
-        questionTextView.setText(quizzRow.question);
+        questionTextView.setText(quizzRow.correctQuestion);
 
         twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), quizzRow.correctAnswer);
 
