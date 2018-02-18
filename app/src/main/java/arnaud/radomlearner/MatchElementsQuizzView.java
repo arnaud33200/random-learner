@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 
+import arnaud.radomlearner.model.Quiz;
+
 /**
  * Created by arnaud on 2018/02/17.
  */
@@ -22,6 +24,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
 
     ArrayList<ElementToMatchView> topElementToMatchArrayList;
     ArrayList<ElementToMatchView> bottomElementToMatchArrayList;
+    private Quiz quiz;
 
     public MatchElementsQuizzView(Context context) {
         super(context);
@@ -49,6 +52,14 @@ public class MatchElementsQuizzView extends RelativeLayout {
         for (int i=0; i<bottomLinearLayout.getChildCount(); ++i) {
             ElementToMatchView view = (ElementToMatchView) bottomLinearLayout.getChildAt(i);
             bottomElementToMatchArrayList.add(view);
+        }
+    }
+
+    public void setCurrentQuiz(Quiz quiz) {
+        this.quiz = quiz;
+        for (int i=0; i<quiz.questionArray.size(); i++) {
+            topElementToMatchArrayList.get(i).setText(quiz.questionArray.get(i));
+            bottomElementToMatchArrayList.get(i).setText(quiz.answerArray.get(i));
         }
     }
 

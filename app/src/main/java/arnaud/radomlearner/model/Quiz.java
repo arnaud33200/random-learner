@@ -1,6 +1,9 @@
 package arnaud.radomlearner.model;
 
+import android.util.Pair;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import arnaud.radomlearner.helper.DataHelper;
 
@@ -13,28 +16,69 @@ public class Quiz {
     public ArrayList<String> questionArray;
     public ArrayList<String> answerArray;
 
-    public String userAnswer;
+    public HashMap<String, String> correctMap;
+    private HashMap<String, String> answerMap;
 
-    public String correctQuestion;
-    public String correctAnswer;
-
-    public Quiz(String correctQuestion, String correctAnswer, ArrayList questionArray, ArrayList answerArray) {
+    public Quiz(HashMap<String, String> correctMap, ArrayList questionArray, ArrayList answerArray) {
         this.questionArray = questionArray;
         this.answerArray = answerArray;
-        this.correctQuestion = correctQuestion;
-        this.correctAnswer = correctAnswer;
-        this.userAnswer = "";
+        this.correctMap = correctMap;
+        this.answerMap = new HashMap<>();
     }
 
-    public String getRandomQuestion() {
-        int r = DataHelper.getRadomNumber(0, questionArray.size()-1);
-        return questionArray.get(r);
+    public Pair<String, String> getFirsCorrectPair() {
+        return getCorrectPairAtIndex(0);
+    }
+
+    public Pair<String, String> getRandomCorrectPair() {
+        int r = DataHelper.getRadomNumber(0, correctMap.size()-1);
+        return getCorrectPairAtIndex(r);
+    }
+
+    public Pair<String, String> getCorrectPairAtIndex(int index) {
+        String key = new ArrayList<>(correctMap.keySet()).get(index);
+        if (key == null) {
+            return new Pair<>("", "");
+        }
+        String value = correctMap.get(key);
+        return new Pair<>(key, value);
+    }
+
+    public void setUserAnswer(String question, String answer) {
+        answerMap.put(question, answer);
+    }
+
+    public String getCorrectAnswer(String question) {
+        String correctAnswer = correctMap.get(question);
+        return correctAnswer;
     }
 
     public boolean isCorrectAnswer() {
-        if (this.userAnswer == null) {
-            return false;
+        boolean correct = true;
+        for (String question : answerMap.keySet()) {
+            String answer = answerMap.get(question);
+            String correctAnswer = getCorrectAnswer(question);
+            if (answer.equals(correctAnswer) == false) {
+                correct = false; break;
+            }
         }
-        return correctAnswer.equals(this.userAnswer);
+        return correct;
+    }
+
+    public HashMap<String, String> getAnswerMap() {
+        return answerMap;
+    }
+
+    public String getFirstUserAnswer() {
+        int index = 0;
+        ArrayList<String> userAnswerArray = new ArrayList<>(answerMap.values());
+        if (userAnswerArray.size() == 0) {
+            return "";
+        }
+        String answer = userAnswerArray.get(index);
+        if (answer == null) {
+            answer = "";
+        }
+        return answer;
     }
 }

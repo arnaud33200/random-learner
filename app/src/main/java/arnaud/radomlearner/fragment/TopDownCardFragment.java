@@ -3,6 +3,7 @@ package arnaud.radomlearner.fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,7 +106,10 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
         }
 
         Quiz quiz = mQuizArrayList.get(currentIndex);
-        quiz.userAnswer = correct ? quiz.correctAnswer : "WRONG";
+        Pair<String, String> correctPair = quiz.getFirsCorrectPair();
+
+        String answer = correct ? correctPair.second : "WRONG";
+        quiz.setUserAnswer(correctPair.first, answer);
         onUserAnswerAction(quiz);
 
         currentIndex++;
@@ -130,12 +134,13 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
 
 //        final int randomBool = DataHelper.getRadomNumber(0, 1);
 
+        Pair<String, String> correctPair = quiz.getFirsCorrectPair();
         if (getRevert()) {
-            topGuessWordView.setTextAndDisplayMode(quiz.correctQuestion, true);
-            bottomGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
+            topGuessWordView.setTextAndDisplayMode(correctPair.first, true);
+            bottomGuessWordView.setTextAndDisplayMode(correctPair.second, false);
         } else {
-            topGuessWordView.setTextAndDisplayMode(quiz.correctAnswer, false);
-            bottomGuessWordView.setTextAndDisplayMode(quiz.correctQuestion, true);
+            topGuessWordView.setTextAndDisplayMode(correctPair.second, false);
+            bottomGuessWordView.setTextAndDisplayMode(correctPair.first, true);
         }
 
         updateMiddleGuestLayout();

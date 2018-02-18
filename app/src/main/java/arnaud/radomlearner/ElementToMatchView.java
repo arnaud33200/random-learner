@@ -54,4 +54,7 @@ public class ElementToMatchView extends RelativeLayout {
         backgroundImageView.setColorFilter(backgroundColor);
     }
 
+    public void setText(String s) {
+        textView.setText(s);
+    }
 }

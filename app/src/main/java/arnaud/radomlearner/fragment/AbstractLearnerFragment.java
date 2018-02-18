@@ -3,12 +3,14 @@ package arnaud.radomlearner.fragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.action_interface.UserActionListener;
@@ -27,8 +29,8 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     private boolean revert = false;
     private int limit;
 
-    private HashMap<String, Quiz> mUserCorrectAnswerMap;
-    private HashMap<String, Quiz> mUserBadAnswerMap;
+    private HashSet<Quiz> mUserCorrectAnswerSet;
+    private HashSet<Quiz> mUserBadAnswerSet;
     private ArrayList<Quiz> mQuizArrayList;
 
     public QuizzAnswerListener listener;
@@ -74,12 +76,15 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
     public void resetWithOnlyBadUserAnswer() {
         HashMap<String, String> badWordMap = new HashMap<>();
-        for (Quiz quizzRow : mUserBadAnswerMap.values()) {
-            if (revert) {
-                badWordMap.put(quizzRow.correctAnswer, quizzRow.correctQuestion);
-            }
-            else {
-                badWordMap.put(quizzRow.correctQuestion, quizzRow.correctAnswer);
+        for (Quiz quizzRow : mUserBadAnswerSet) {
+            for (String correctQuestion : quizzRow.correctMap.keySet()) {
+                String correctAnswer = quizzRow.correctMap.get(correctQuestion);
+                if (revert) {
+                    badWordMap.put(correctAnswer, correctQuestion);
+                }
+                else {
+                    badWordMap.put(correctQuestion, correctAnswer);
+                }
             }
         }
         ArrayList<Quiz> quizArrayList = generateQuizArray(badWordMap);
@@ -89,8 +94,8 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
     private ArrayList<Quiz> generateQuizArray(HashMap<String, String> wordMapGenerated) {
         // reset answer at this point
-        mUserCorrectAnswerMap = new HashMap<>();
-        mUserBadAnswerMap = new HashMap<>();
+        mUserCorrectAnswerSet = new HashSet<>();
+        mUserBadAnswerSet = new HashSet<>();
 
         mQuizArrayList = new ArrayList<>();
 
@@ -106,9 +111,19 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
 
             ArrayList<String> questionArray = new ArrayList<>();
             ArrayList<String> answerArray = new ArrayList<>();
+            HashMap<String, String> correctMap = new HashMap<>();
 
-            questionArray.add(originalQuestion);
-            answerArray.add(originalAnswer);
+
+            if (revert) {
+                questionArray.add(originalAnswer);
+                answerArray.add(originalQuestion);
+                correctMap.put(originalAnswer, originalQuestion);
+            }
+            else {
+                answerArray.add(originalAnswer);
+                questionArray.add(originalQuestion);
+                correctMap.put(originalQuestion, originalAnswer);
+            }
 
             int i=0;
             while (questionArray.size() < numberOfQuestion || answerArray.size() < numberOfAnswer) {
@@ -122,8 +137,9 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                 } else {
                     int r = DataHelper.getRadomNumber(0, mQuizArrayList.size()-1);
                     Quiz row = mQuizArrayList.get(r);
-                    a = revert ? row.correctQuestion : row.correctAnswer;
-                    q = revert ? row.correctAnswer : row.correctQuestion;
+                    Pair<String, String> pair = row.getRandomCorrectPair();
+                    a = revert ? pair.first : pair.second;
+                    q = revert ? pair.second : pair.first;
                 }
 
                 int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
@@ -132,15 +148,19 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                     else { questionArray.add(insertIndex, q); }
                 }
 
+                insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
                 if (answerArray.size() < numberOfAnswer) {
                     if (revert) { answerArray.add(insertIndex, q); }
                     else { answerArray.add(insertIndex, a); }
                 }
 
+                if (revert) { correctMap.put(a,q); }
+                else { correctMap.put(q,a); }
+
                 i++;
             }
 
-            Quiz quizzRow = new Quiz(originalQuestion, originalAnswer, questionArray, answerArray);
+            Quiz quizzRow = new Quiz(correctMap, questionArray, answerArray);
             mQuizArrayList.add(quizzRow);
             if (limit > 0 && mQuizArrayList.size() >= limit) {
                 break;
@@ -159,11 +179,10 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     public void onUserAnswerAction(Quiz mQuizzRow) {
         boolean correct = mQuizzRow.isCorrectAnswer();
         if (correct) {
-            mUserCorrectAnswerMap.put(mQuizzRow.correctQuestion, mQuizzRow);
+            mUserCorrectAnswerSet.add(mQuizzRow);
         } else {
-            mUserBadAnswerMap.put(mQuizzRow.correctQuestion, mQuizzRow);
+            mUserBadAnswerSet.add(mQuizzRow);
         }
-
         sendUserAnswerChanged();
     }
 
@@ -171,8 +190,8 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         if (listener == null) {
             return;
         }
-        int totalAnswer = mUserBadAnswerMap.size() + mUserCorrectAnswerMap.size();
-        listener.onUserAnswerChanged(mQuizArrayList.size(), totalAnswer, mUserCorrectAnswerMap.size());
+        int totalAnswer = mUserBadAnswerSet.size() + mUserCorrectAnswerSet.size();
+        listener.onUserAnswerChanged(mQuizArrayList.size(), totalAnswer, mUserCorrectAnswerSet.size());
     }
 
     public boolean getRevert() {

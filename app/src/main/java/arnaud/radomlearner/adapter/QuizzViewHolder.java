@@ -1,6 +1,7 @@
 package arnaud.radomlearner.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,21 +35,28 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
     public void setViewWithQuizzRow(Quiz quizzRow, UserActionListener listener) {
         mQuizzRow = quizzRow;
         this.listener = listener;
-        questionTextView.setText(quizzRow.correctQuestion);
 
-        twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), quizzRow.correctAnswer);
-
+    // init view
+        Pair<String, String> correctPair = mQuizzRow.getFirsCorrectPair();
+        questionTextView.setText(correctPair.first);
+        if (quizzRow.answerArray.size() == 0) {
+            quizzRow.answerArray.add("dfs");
+        }
+        twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), correctPair.second);
         twoSideSliderButtonView.setToInitialState();
-        if (mQuizzRow.userAnswer.length() > 0) {
-            boolean left = mQuizzRow.userAnswer.equals(quizzRow.answerArray.get(0));
+
+    // user answer
+        String answer = mQuizzRow.getFirstUserAnswer();
+        if (answer.length() > 0) {
+            boolean left = answer.equals(quizzRow.answerArray.get(0));
             twoSideSliderButtonView.animationSlideButton(left, false);
         }
     }
 
     @Override
     public void onSliderClickAction(String answer) {
-        mQuizzRow.userAnswer = answer;
-        boolean correct = mQuizzRow.isCorrectAnswer();
+        Pair<String, String> correctPair = mQuizzRow.getFirsCorrectPair();
+        mQuizzRow.setUserAnswer(correctPair.first, answer);
         if (listener != null) {
             listener.onUserAnswerAction(mQuizzRow);
         }
