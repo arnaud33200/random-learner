@@ -16,14 +16,20 @@ import arnaud.radomlearner.model.Quiz;
  * Created by arnaud on 2018/02/17.
  */
 
-public class MatchElementQuizFragment extends AbstractLearnerFragment {
+public class MatchElementQuizFragment extends AbstractLearnerFragment implements MatchElementsQuizzView.MatchElementActionListener {
 
     private MatchElementsQuizzView matchElementsQuizzView;
     private ArrayList<Quiz> quizArrayList;
     private int currentIndex = 0;
 
-    @Override
-    public boolean needToDisplayTopStatusBar() { return true; }
+    @Override public boolean needToDisplayTopStatusBar() { return true; }
+
+    @Override protected int getNumberOfQuestion() {
+        return 4;
+    }
+    @Override protected int getNumberOfAnswer() {
+        return 4;
+    }
 
     @Override
     protected int getMainLayoutRes() {
@@ -36,6 +42,7 @@ public class MatchElementQuizFragment extends AbstractLearnerFragment {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
 
         matchElementsQuizzView = rootView.findViewById(R.id.match_element_view);
+        matchElementsQuizzView.setListener(this);
         initializeCurrentQuiz();
         return rootView;
     }
@@ -63,12 +70,9 @@ public class MatchElementQuizFragment extends AbstractLearnerFragment {
     }
 
     @Override
-    protected int getNumberOfQuestion() {
-        return 3;
-    }
-
-    @Override
-    protected int getNumberOfAnswer() {
-        return 3;
+    public void onUserFinishMatching(Quiz quiz) {
+        onUserAnswerAction(quiz);
+        currentIndex++;
+        initializeCurrentQuiz();
     }
 }

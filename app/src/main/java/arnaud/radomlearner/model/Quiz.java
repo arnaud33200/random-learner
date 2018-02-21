@@ -19,6 +19,10 @@ public class Quiz {
     public HashMap<String, String> correctMap;
     private HashMap<String, String> answerMap;
 
+    public Quiz() {
+        this(new HashMap<String, String>(), new ArrayList(), new ArrayList());
+    }
+
     public Quiz(HashMap<String, String> correctMap, ArrayList questionArray, ArrayList answerArray) {
         this.questionArray = questionArray;
         this.answerArray = answerArray;
@@ -45,7 +49,11 @@ public class Quiz {
     }
 
     public void setUserAnswer(String question, String answer) {
-        answerMap.put(question, answer);
+        String userAnswer = answerMap.get(question);
+        // only if he did answer yet
+        if (userAnswer == null) {
+            answerMap.put(question, answer);
+        }
     }
 
     public String getCorrectAnswer(String question) {
@@ -80,5 +88,35 @@ public class Quiz {
             answer = "";
         }
         return answer;
+    }
+
+    public boolean questionAlreadyAdded(String question) {
+        String answer = getCorrectAnswer(question);
+        boolean alreadyAdded = answer != null;
+        if (alreadyAdded) {
+            answer = "";
+        }
+        return alreadyAdded;
+    }
+
+    public void addQuestionAndAsnwer(String question, String answer) {
+        int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+        questionArray.add(insertIndex, question);
+        correctMap.put(question, answer);
+
+        insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+        answerArray.add(insertIndex, answer);
+    }
+
+    public void invertQuestionAnswer() {
+        ArrayList<String> copyQuestionArray = (ArrayList<String>) questionArray.clone();
+        questionArray = answerArray;
+        answerArray = copyQuestionArray;
+        HashMap<String, String> newCorrectMap = new HashMap<>();
+        for (String question : correctMap.keySet()) {
+            String answer = correctMap.get(question);
+            newCorrectMap.put(answer, question);
+        }
+        correctMap = newCorrectMap;
     }
 }

@@ -14,12 +14,26 @@ import android.widget.TextView;
 
 public class ElementToMatchView extends RelativeLayout {
 
+    boolean top;
     TextView textView;
     private ImageView backgroundImageView;
+    private String text;
 
     public ElementToMatchView(Context context) {
         super(context);
         init(context);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ElementToMatchView == false) {
+            return super.equals(obj);
+        }
+        ElementToMatchView element = (ElementToMatchView) obj;
+        if (element.top == this.top && element.getText().equals(getText())) {
+            return true;
+        }
+        return false;
     }
 
     public ElementToMatchView(Context context, AttributeSet attrs) {
@@ -49,12 +63,17 @@ public class ElementToMatchView extends RelativeLayout {
         backgroundImageView.setColorFilter(backgroundColor);
     }
 
-    public void setSelectedState() {
-        int backgroundColor = RandomLearnerApp.getContextColor(R.color.colorAccent);
+    public void setSelectedState(int color) {
+        int backgroundColor = RandomLearnerApp.getContextColor(color);
         backgroundImageView.setColorFilter(backgroundColor);
     }
 
     public void setText(String s) {
+        text = s;
         textView.setText(s);
+    }
+
+    public String getText() {
+        return text;
     }
 }
