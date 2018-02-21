@@ -124,7 +124,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                     answer = wordMapGenerated.get(question);
                 }
 
-                if (mQuizArrayList.size() > 0 && (question.length() == 0 || quizzRow.questionAlreadyAdded(question))) {
+                if (mQuizArrayList.size() > 0 && (question.length() == 0 && quizzRow.questionAlreadyAdded(question))) {
                     int r = DataHelper.getRadomNumber(0, mQuizArrayList.size()-1);
                     Quiz row = mQuizArrayList.get(r);
                     Pair<String, String> pair = row.getRandomCorrectPair();

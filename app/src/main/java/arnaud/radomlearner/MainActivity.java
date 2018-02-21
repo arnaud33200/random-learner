@@ -1,13 +1,10 @@
 package arnaud.radomlearner;
 
-import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,6 +21,7 @@ import arnaud.radomlearner.fragment.ListQuestionAnswerFragment;
 import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
+import arnaud.radomlearner.UserPreference.DictType;
 
 public class MainActivity extends AppCompatActivity implements QuizzAnswerListener, TwoSideSliderButtonView.SideSliderListener {
 
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             public void onClick(View view) { replaceCurrentFragment(new MatchElementQuizFragment()); }
         });
 
-        HashMap<String, String> wordMap = initAdjectiveDict();
+        HashMap<String, String> wordMap = getCurrentWordMap();
         currentFragment.setWordMap(wordMap, limit);
     }
 
@@ -105,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             wordMap = currentFragment.getWordMap();
         }
         if (wordMap == null) {
-            wordMap = initAdjectiveDict();
+            wordMap = getCurrentWordMap();
         }
 
         currentFragment = fragment;
@@ -133,24 +131,16 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        HashMap<String, String> wordMap;
-        if (item.getItemId() == R.id.adjective_menu) {
-            wordMap = initAdjectiveDict();
-        }
-        else if (item.getItemId() == R.id.verb_menu) {
-            wordMap = initVerbMap();
-        }
-        else if (item.getItemId() == R.id.hiragana_menu) {
-            wordMap = initHiraganaMap();
-        }
-        else if (item.getItemId() == R.id.katana_menu) {
-            wordMap = initKatakanaMap();
-        }
-        else {
-            return false;
-        }
+        DictType dictType = DictType.Adjective;
+        if (item.getItemId() == R.id.adjective_menu) { dictType = DictType.Adjective; }
+        else if (item.getItemId() == R.id.verb_menu) { dictType = DictType.Verb; }
+        else if (item.getItemId() == R.id.hiragana_menu) { dictType = DictType.Hiragana; }
+        else if (item.getItemId() == R.id.katana_menu_1) { dictType = DictType.KatakanaPart1; }
+        else if (item.getItemId() == R.id.katana_menu_all) { dictType = DictType.KatakanaAll; }
 
-        currentFragment.setWordMap(wordMap, limit);
+        UserPreference.getInstance().setCurrentSelectedDictType(dictType);
+        initWordMapFromCurrentDictType();
+
         return true;
     }
 
@@ -170,6 +160,22 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 //            statusText = statusText + " (" + totalCorrect + " correct)";
 //        }
         statusTextView.setText(statusText);
+    }
+
+    private void initWordMapFromCurrentDictType() {
+        HashMap<String, String> wordMap = getCurrentWordMap();
+        currentFragment.setWordMap(wordMap, limit);
+    }
+
+    private HashMap<String, String> getCurrentWordMap() {
+        DictType dictType = UserPreference.getInstance().getCurrentSelectedDictType();
+        HashMap<String, String> wordMap = new HashMap<>();
+        if (dictType == DictType.Adjective) { wordMap = initAdjectiveDict(); }
+        else if (dictType == DictType.Verb) { wordMap = initVerbMap(); }
+        else if (dictType == DictType.Hiragana) { wordMap = initHiraganaMap(); }
+        else if (dictType == DictType.KatakanaPart1) { wordMap = initKatakanaPart1Map(); }
+        else if (dictType == DictType.KatakanaAll) { wordMap = initKatakanaAllMap(); }
+        return wordMap;
     }
 
     private HashMap<String, String> initAdjectiveDict() {
@@ -193,7 +199,14 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         return wordMap;
     }
 
-    private HashMap<String, String> initKatakanaMap() {
+    private HashMap<String, String> initKatakanaPart1Map() {
+        this.setTitle("Katakana");
+        HashMap<String, String> wordMap = new HashMap<String, String>();
+        wordMap.put("ア", "A"); wordMap.put("イ", "I"); wordMap.put("ウ", "U"); wordMap.put("エ", "E"); wordMap.put("オ", "O"); wordMap.put("カ", "KA"); wordMap.put("キ", "KI"); wordMap.put("ク", "KU"); wordMap.put("ケ", "KE"); wordMap.put("コ", "KO"); wordMap.put("サ", "SA"); wordMap.put("シ", "SI"); wordMap.put("ス", "SU"); wordMap.put("セ", "SE"); wordMap.put("ソ", "SO"); wordMap.put("タ", "TA"); wordMap.put("チ", "CHI"); wordMap.put("ツ", "TSU"); wordMap.put("テ", "TE"); wordMap.put("ト", "TO"); wordMap.put("ナ", "NA"); wordMap.put("ニ", "NI"); wordMap.put("ヌ", "NU"); wordMap.put("ネ", "NE"); wordMap.put("ノ", "NO"); wordMap.put("ハ", "HA"); wordMap.put("ヒ", "HI"); wordMap.put("フ", "FU"); wordMap.put("ヘ", "HE"); wordMap.put("ホ", "HO"); wordMap.put("マ", "MA"); wordMap.put("ミ", "MI"); wordMap.put("ム", "MU"); wordMap.put("メ", "ME"); wordMap.put("モ", "MO"); wordMap.put("ヤ", "YA"); wordMap.put("ユ", "YU"); wordMap.put("ヨ", "YO"); wordMap.put("ラ", "RA"); wordMap.put("リ", "RI"); wordMap.put("ル", "RU"); wordMap.put("レ", "RE"); wordMap.put("ロ", "RO"); wordMap.put("ワ", "WA"); wordMap.put("ヲ", "WO"); wordMap.put("ン", "N");
+        return wordMap;
+    }
+
+    private HashMap<String, String> initKatakanaAllMap() {
         this.setTitle("Katakana");
         HashMap<String, String> wordMap = new HashMap<String, String>();
         wordMap.put("ア", "A"); wordMap.put("イ", "I"); wordMap.put("ウ", "U"); wordMap.put("エ", "E"); wordMap.put("オ", "O"); wordMap.put("カ", "KA"); wordMap.put("ガ", "GA"); wordMap.put("キ", "KI"); wordMap.put("ギ", "GI"); wordMap.put("ク", "KU"); wordMap.put("グ", "GU"); wordMap.put("ケ", "KE"); wordMap.put("ゲ", "GE"); wordMap.put("コ", "KO"); wordMap.put("ゴ", "GO"); wordMap.put("サ", "SA"); wordMap.put("ザ", "ZA"); wordMap.put("シ", "SI"); wordMap.put("ジ", "ZI"); wordMap.put("ス", "SU"); wordMap.put("ズ", "ZU"); wordMap.put("セ", "SE"); wordMap.put("ゼ", "ZE"); wordMap.put("ソ", "SO"); wordMap.put("ゾ", "ZO"); wordMap.put("タ", "TA"); wordMap.put("ダ", "DA"); wordMap.put("チ", "CHI"); wordMap.put("ヂ", "DI"); wordMap.put("ツ", "TSU"); wordMap.put("ヅ", "DU"); wordMap.put("テ", "TE"); wordMap.put("デ", "DE"); wordMap.put("ト", "TO"); wordMap.put("ド", "DO"); wordMap.put("ナ", "NA"); wordMap.put("ニ", "NI"); wordMap.put("ヌ", "NU"); wordMap.put("ネ", "NE"); wordMap.put("ノ", "NO"); wordMap.put("ハ", "HA"); wordMap.put("バ", "BA"); wordMap.put("パ", "PA"); wordMap.put("ヒ", "HI"); wordMap.put("ビ", "BI"); wordMap.put("ピ", "PI"); wordMap.put("フ", "FU"); wordMap.put("ブ", "BU"); wordMap.put("プ", "PU"); wordMap.put("ヘ", "HE"); wordMap.put("ベ", "BE"); wordMap.put("ペ", "PE"); wordMap.put("ホ", "HO"); wordMap.put("ボ", "BO"); wordMap.put("ポ", "PO"); wordMap.put("マ", "MA"); wordMap.put("ミ", "MI"); wordMap.put("ム", "MU"); wordMap.put("メ", "ME"); wordMap.put("モ", "MO"); wordMap.put("ヤ", "YA"); wordMap.put("ユ", "YU"); wordMap.put("ヨ", "YO"); wordMap.put("ラ", "RA"); wordMap.put("リ", "RI"); wordMap.put("ル", "RU"); wordMap.put("レ", "RE"); wordMap.put("ロ", "RO"); wordMap.put("ワ", "WA"); wordMap.put("ヰ", "WI"); wordMap.put("ヱ", "WE"); wordMap.put("ヲ", "WO"); wordMap.put("ン", "N"); wordMap.put("ヴ", "VU");

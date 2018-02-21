@@ -18,6 +18,8 @@ public class RandomLearnerApp extends Application {
         super.onCreate();
 
         sharedInstance = this;
+
+        new UserPreference();
     }
 
     public static Context getContext() {

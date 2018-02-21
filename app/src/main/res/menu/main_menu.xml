@@ -13,8 +13,12 @@
     <item android:id="@+id/hiragana_menu"
         android:title="Hiranaga"
         />
-    <item android:id="@+id/katana_menu"
-        android:title="Katakana"
+    <item android:id="@+id/katana_menu_1"
+        android:title="Katakana part 1"
+        />
+
+    <item android:id="@+id/katana_menu_all"
+        android:title="Katakana all"
         />
 
 
