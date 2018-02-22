@@ -37,9 +37,10 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
         this.listener = listener;
 
     // init view
-        Pair<String, String> correctPair = mQuizzRow.getFirsCorrectPair();
-        questionTextView.setText(quizzRow.questionArray.get(0));
-        twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), correctPair.second);
+        String question = quizzRow.firstQuestion;
+        questionTextView.setText(question);
+        String correctAnswer = quizzRow.getCorrectAnswer(question);
+        twoSideSliderButtonView.setText(quizzRow.answerArray.get(0), quizzRow.answerArray.get(1), correctAnswer);
         twoSideSliderButtonView.setToInitialState();
 
     // user answer
@@ -52,8 +53,8 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
 
     @Override
     public void onSliderClickAction(String answer) {
-        Pair<String, String> correctPair = mQuizzRow.getFirsCorrectPair();
-        mQuizzRow.setUserAnswer(correctPair.first, answer);
+        String question = mQuizzRow.firstQuestion;
+        mQuizzRow.setUserAnswer(question, answer);
         if (listener != null) {
             listener.onUserAnswerAction(mQuizzRow);
         }

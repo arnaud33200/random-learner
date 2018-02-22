@@ -3,6 +3,7 @@ package arnaud.radomlearner.model;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import arnaud.radomlearner.helper.DataHelper;
@@ -12,6 +13,9 @@ import arnaud.radomlearner.helper.DataHelper;
  */
 
 public class Quiz {
+
+    public String firstQuestion;
+    public String firstAnswer;
 
     public ArrayList<String> questionArray;
     public ArrayList<String> answerArray;
@@ -100,18 +104,41 @@ public class Quiz {
     }
 
     public void addQuestionAndAsnwer(String question, String answer) {
-        int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
-        questionArray.add(insertIndex, question);
-        correctMap.put(question, answer);
+        addQuestion(question, answer);
+        addAnswer(answer);
+    }
 
-        insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+    public void addQuestion(String question, String correctAnswer) {
+        int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+        if (questionArray.size() == 0) {
+            firstQuestion = question;
+        }
+        questionArray.add(insertIndex, question);
+        correctMap.put(question, correctAnswer);
+    }
+
+    public void addAnswer(String answer) {
+        int insertIndex = DataHelper.getRadomNumber(0, answerArray.size());
+        if (answerArray.size() == 0) {
+            firstAnswer = answer;
+        }
         answerArray.add(insertIndex, answer);
     }
 
+
+
     public void invertQuestionAnswer() {
+        String copyFirstQuestion = firstQuestion;
+        firstQuestion = firstAnswer;
+        firstAnswer = firstQuestion;
+
         ArrayList<String> copyQuestionArray = (ArrayList<String>) questionArray.clone();
         questionArray = answerArray;
         answerArray = copyQuestionArray;
+
+        Collections.reverse(questionArray);
+        Collections.reverse(answerArray);
+
         HashMap<String, String> newCorrectMap = new HashMap<>();
         for (String question : correctMap.keySet()) {
             String answer = correctMap.get(question);
