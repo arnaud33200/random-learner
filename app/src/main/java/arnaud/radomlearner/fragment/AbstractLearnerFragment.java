@@ -122,6 +122,9 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                     int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
                     question = keyArray.get(r);
                     answer = wordMapGenerated.get(question);
+                    if (numberOfQuestion > quizzRow.questionArray.size()) {
+                        keyArray.remove(r);
+                    }
                 }
 
                 if (mQuizArrayList.size() > 0 && (question.length() == 0 || quizzRow.questionAlreadyAdded(question))) {
@@ -133,13 +136,6 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
                 }
 
                 quizzRow.addQuestionAndAsnwer(question, answer);
-
-//                if (quizzRow.questionArray.size() < numberOfQuestion) {
-//                    quizzRow.addQuestion(question, answer);
-//                }
-//                if (quizzRow.answerArray.size() < numberOfAnswer) {
-//                    quizzRow.addAnswer(answer);
-//                }
             }
 
             if (revert) {
