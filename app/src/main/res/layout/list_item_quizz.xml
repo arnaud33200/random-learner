@@ -17,8 +17,8 @@
         android:text="Question Here but it can be a very long question"
         />
 
-    <include android:id="@+id/button_layout"
-        layout="@layout/view_two_side_slider_button"
+    <arnaud.radomlearner.TwoSideSliderButtonView
+        android:id="@+id/button_layout"
         android:layout_width="250dp"
         android:layout_height="40dp"
         android:layout_marginLeft="10dp"

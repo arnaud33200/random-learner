@@ -10,15 +10,13 @@
     <RelativeLayout android:id="@+id/quizz_status_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
         >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
             >
 
             <Button android:id="@+id/reset_button"
@@ -44,13 +42,14 @@
 
         </LinearLayout>
 
-        <include android:id="@+id/switch_button"
-            layout="@layout/view_two_side_slider_button"
+        <arnaud.radomlearner.TwoSideSliderButtonView
+            android:id="@+id/switch_button"
             android:layout_width="120dp"
             android:layout_height="30dp"
             android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/status_text_view"
+            app:neutralColor="true"
             />
 
         <TextView android:id="@+id/status_text_view"
@@ -60,6 +59,7 @@
             android:text="12 / 56"
             android:lines="1"
             android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
             />
 
         <View

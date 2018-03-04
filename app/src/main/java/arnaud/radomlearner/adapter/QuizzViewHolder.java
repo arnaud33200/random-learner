@@ -28,7 +28,7 @@ public class QuizzViewHolder extends RecyclerView.ViewHolder implements TwoSideS
 
         questionTextView = itemView.findViewById(R.id.question_text_view);
 
-        twoSideSliderButtonView = new TwoSideSliderButtonView(itemView.findViewById(R.id.button_layout));
+        twoSideSliderButtonView = itemView.findViewById(R.id.button_layout);
         twoSideSliderButtonView.listener = this;
     }
 

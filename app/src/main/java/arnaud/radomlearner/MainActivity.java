@@ -1,10 +1,12 @@
 package arnaud.radomlearner;
 
+import android.content.Context;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,10 +70,9 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             }
         });
 
-        twoSideSliderButtonView = new TwoSideSliderButtonView(findViewById(R.id.switch_button), true);
+        twoSideSliderButtonView = findViewById(R.id.switch_button);
         twoSideSliderButtonView.setOnlyOneAnswer(false);
         twoSideSliderButtonView.setText("ALL", "30", "");
-        twoSideSliderButtonView.animationSlideButton(true, false);
         twoSideSliderButtonView.listener = this;
 
         replaceCurrentFragment(new TopDownCardFragment());
@@ -95,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
         HashMap<String, String> wordMap = getCurrentWordMap();
         currentFragment.setWordMap(wordMap, limit);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (twoSideSliderButtonView != null) {
+            twoSideSliderButtonView.animationSlideButton(true, false);
+        }
     }
 
     private void replaceCurrentFragment(AbstractLearnerFragment fragment) {
