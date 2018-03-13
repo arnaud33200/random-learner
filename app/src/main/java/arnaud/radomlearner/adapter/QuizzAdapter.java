@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import arnaud.radomlearner.R;
+import arnaud.radomlearner.RandomLearnerApp;
 import arnaud.radomlearner.action_interface.UserActionListener;
 import arnaud.radomlearner.model.Quiz;
 
@@ -41,6 +42,13 @@ public class QuizzAdapter extends RecyclerView.Adapter<QuizzViewHolder> {
     public void onBindViewHolder(QuizzViewHolder holder, int position) {
         Quiz quizzRow = mQuizzRowArrayList.get(position);
         holder.setViewWithQuizzRow(quizzRow, listener);
+
+        if (position % 2 != 0) {
+            holder.itemView.setBackgroundColor(RandomLearnerApp.getContextColor(R.color.grey_back_text));
+        }
+        else {
+            holder.itemView.setBackgroundColor(RandomLearnerApp.getContextColor(R.color.white));
+        }
     }
 
     @Override

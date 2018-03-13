@@ -62,7 +62,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
             @Override
             public void onClick(View view) { nextButtonClickAction(); }
         });
-        nextButton.setVisibility(INVISIBLE);
+        nextButton.setVisibility(GONE);
 
         elementToMatchArrayList = new ArrayList<>();
         topLinearLayout = rootView.findViewById(R.id.top_linear_layout);
@@ -87,7 +87,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
     }
 
     public void setCurrentQuiz(Quiz quiz) {
-        nextButton.setVisibility(INVISIBLE);
+        nextButton.setVisibility(GONE);
         topLinearLayout.setAlpha(1.0f);
         bottomLinearLayout.setAlpha(1.0f);
         userAnswerArray = new ArrayList<>();
@@ -177,10 +177,12 @@ public class MatchElementsQuizzView extends RelativeLayout {
             userAnswerArray.add(currentSelection);
         }
         quiz.setUserAnswer(topText, bottomText);
+
+        float finishAlpha = 1.0f;
         if (userAnsweredEverything()) {
             nextButton.setVisibility(VISIBLE);
-            topLinearLayout.setAlpha(0.4f);
-            bottomLinearLayout.setAlpha(0.4f);
+            topLinearLayout.setAlpha(finishAlpha);
+            bottomLinearLayout.setAlpha(finishAlpha);
         }
     }
 

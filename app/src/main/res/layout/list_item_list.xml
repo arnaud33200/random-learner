@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="60dp">
 
         <RelativeLayout android:id="@+id/central_layout"
             android:layout_width="0dp"
@@ -26,11 +26,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="Question"
-                android:textSize="18dp"
+                android:text="Question that can be long too"
+                android:textSize="@dimen/liste_item_text_size"
                 android:textColor="@color/white"
                 android:gravity="end"
-                android:layout_marginRight="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
                 />
 
         </RelativeLayout>
@@ -46,9 +47,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="ANSWER"
-                android:textSize="18dp"
-                android:layout_marginLeft="30dp"
+                android:text="Answer that is very long"
+                android:textSize="@dimen/liste_item_text_size"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="20dp"
                 />
 
         </RelativeLayout>

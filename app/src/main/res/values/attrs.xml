@@ -3,4 +3,7 @@
     <declare-styleable name="TwoSideSliderButtonView">
         <attr name="neutralColor" format="boolean" />
     </declare-styleable>
+
+    <dimen name="liste_item_text_size">24sp</dimen>
+
 </resources>
