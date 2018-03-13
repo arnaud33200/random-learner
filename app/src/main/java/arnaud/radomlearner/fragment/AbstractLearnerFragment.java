@@ -132,8 +132,13 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         if (listener == null) {
             return;
         }
-        int totalAnswer = mUserBadAnswerSet.size() + mUserCorrectAnswerSet.size();
-        listener.onUserAnswerChanged(mQuizArrayList.size(), totalAnswer, mUserCorrectAnswerSet.size());
+
+        int numberOfQuestion = getNumberOfQuestion();
+        int totalQuestion = numberOfQuestion * mQuizArrayList.size();
+
+        int totalAnswer = (mUserBadAnswerSet.size() + mUserCorrectAnswerSet.size()) * numberOfQuestion;
+
+        listener.onUserAnswerChanged(totalQuestion, totalAnswer, mUserCorrectAnswerSet.size());
     }
 
     public boolean getRevert() {

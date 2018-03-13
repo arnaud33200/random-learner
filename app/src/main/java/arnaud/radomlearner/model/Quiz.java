@@ -188,7 +188,8 @@ public class Quiz {
             }
             mQuizArrayList.add(quizzRow);
 
-            if (limit > 0 && mQuizArrayList.size() >= limit) {
+            int totalQuestion = mQuizArrayList.size() * numberOfQuestion;
+            if (limit > 0 && totalQuestion >= limit) {
                 break;
             }
         }
