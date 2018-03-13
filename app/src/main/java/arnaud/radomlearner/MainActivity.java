@@ -1,6 +1,7 @@
 package arnaud.radomlearner;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -19,13 +20,14 @@ import java.util.HashMap;
 
 import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
+import arnaud.radomlearner.fragment.FinalScoreFragment;
 import arnaud.radomlearner.fragment.ListQuestionAnswerFragment;
 import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 import arnaud.radomlearner.UserPreference.DictType;
 
-public class MainActivity extends AppCompatActivity implements QuizzAnswerListener, TwoSideSliderButtonView.SideSliderListener {
+public class MainActivity extends AppCompatActivity implements QuizzAnswerListener, TwoSideSliderButtonView.SideSliderListener, FinalScoreFragment.FinalScoreActionListener {
 
     private AbstractLearnerFragment currentFragment;
 
@@ -52,14 +54,13 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
         resetButton = findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) { currentFragment.resetQuizArray(); }
+            @Override public void onClick(View view) { onStatusBarResetButtonCLickAction(); }
         });
 
         revertButton = findViewById(R.id.revert_button);
         revertButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) { currentFragment.swapQuestionAnswer(); }
+            public void onClick(View view) { onStatusBarRevertButtonAction(); }
         });
 
         badButton = findViewById(R.id.bad_button);
@@ -106,6 +107,25 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         }
     }
 
+    @Override
+    public void onUserAnswerChanged(int totalQuestion, int totalAnswer, int totalCorrect) {
+        if (statusTextView == null) {
+            return;
+        }
+        String statusText = "" + totalAnswer + " / " + totalQuestion;
+//        if (totalAnswer > 0) {
+//            statusText = statusText + " (" + totalCorrect + " correct)";
+//        }
+        statusTextView.setText(statusText);
+
+        if (totalQuestion == totalAnswer && totalAnswer > 0) {
+            displayFinalScoreFragment();
+        }
+    }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// region VIEW SETTINGS
+
     private void replaceCurrentFragment(AbstractLearnerFragment fragment) {
         HashMap<String, String> wordMap = null;
         if (currentFragment != null) {
@@ -117,14 +137,33 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
         currentFragment = fragment;
         currentFragment.listener = this;
-
         fragment.setWordMap(wordMap, limit);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.body_contain_layout, currentFragment);
-        transaction.commit();
 
+        changeFragmentContainer(currentFragment);
         statusBarLayout.setVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
     }
+
+    private void displayFinalScoreFragment() {
+        statusBarLayout.setVisibility(View.GONE);
+        FinalScoreFragment fragment = new FinalScoreFragment(this, currentFragment);
+        changeFragmentContainer(fragment);
+    }
+
+    private void restoreOriginalScoreFragment() {
+        changeFragmentContainer(currentFragment);
+        statusBarLayout.setVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
+    }
+
+    private void changeFragmentContainer(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.body_contain_layout, fragment);
+        transaction.commit();
+    }
+
+// endregion
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// region OPTION MENU
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,23 +192,42 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         return true;
     }
 
+
+// endregion
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// region USER ACTION
+
     @Override
     public void onSliderClickAction(String answer) {
         limit = answer.equals("ALL") ? -1 : 30;
         currentFragment.resetQuizArray(limit);
     }
 
-    @Override
-    public void onUserAnswerChanged(int totalQuestion, int totalAnswer, int totalCorrect) {
-        if (statusTextView == null) {
-            return;
-        }
-        String statusText = "" + totalAnswer + " / " + totalQuestion;
-//        if (totalAnswer > 0) {
-//            statusText = statusText + " (" + totalCorrect + " correct)";
-//        }
-        statusTextView.setText(statusText);
+    private void onStatusBarRevertButtonAction() {
+        currentFragment.swapQuestionAnswer();
     }
+
+    private void onStatusBarResetButtonCLickAction() {
+        currentFragment.resetQuizArray();
+    }
+
+    @Override
+    public void onFinalScoreResetAllButtonClickAction() {
+        restoreOriginalScoreFragment();
+        currentFragment.resetQuizArray();
+    }
+
+    @Override
+    public void onFinalScoreResetBadButtonClickAction() {
+        restoreOriginalScoreFragment();
+        currentFragment.resetWithOnlyBadUserAnswer();
+    }
+
+// endregion
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// region DICT MAP
 
     private void initWordMapFromCurrentDictType() {
         HashMap<String, String> wordMap = getCurrentWordMap();
@@ -190,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     private HashMap<String, String> initAdjectiveDict() {
         this.setTitle("Adjective");
         HashMap<String, String> wordMap = new HashMap<String, String>();
+//        wordMap.put("ookii", "big, large"); wordMap.put("chiisai", "short"); wordMap.put("takai", "expensive"); wordMap.put("yasui", "cheap"); wordMap.put("yoi", "good"); wordMap.put("warui", "bad");
         wordMap.put("ookii", "big, large"); wordMap.put("chiisai", "short"); wordMap.put("takai", "expensive"); wordMap.put("yasui", "cheap"); wordMap.put("yoi", "good"); wordMap.put("warui", "bad"); wordMap.put("se ga takai", "tall"); wordMap.put("se ga hikui", "short"); wordMap.put("utsukushii", "beautiful"); wordMap.put("minikui", "ugly"); wordMap.put("fukai", "deep"); wordMap.put("asai", "shallow"); wordMap.put("hiroi", "wide"); wordMap.put("semai", "narrow"); wordMap.put("atarashii", "new"); wordMap.put("furuii", "old"); wordMap.put("shinsen na", "fresh"); wordMap.put("kusatta", "rotten"); wordMap.put("atsui", "hot"); wordMap.put("samui", "cold (weather)"); wordMap.put("nagai", "long"); wordMap.put("mijikai", "short"); wordMap.put("atsui", "thick"); wordMap.put("usui", "thin"); wordMap.put("omoi", "heavy"); wordMap.put("karui", "light (weight)"); wordMap.put("akarui", "light"); wordMap.put("kurai", "dark"); wordMap.put("katai", "hard"); wordMap.put("yawarakai", "soft"); wordMap.put("kitanai", "dirty"); wordMap.put("kirei na", "clean"); wordMap.put("chikai", "near"); wordMap.put("tooi", "far"); wordMap.put("hayai", "fast"); wordMap.put("osoi", "slow"); wordMap.put("tsuyoi", "strong"); wordMap.put("yowai", "weak"); wordMap.put("muzukashii", "difficult"); wordMap.put("yasashii", "easy"); wordMap.put("abunai", "dangerous"); wordMap.put("anzenna", "safe"); wordMap.put("kawaita", "dry"); wordMap.put("nureta", "wet"); wordMap.put("tadashii", "correct"); wordMap.put("machigatta", "wrong"); wordMap.put("kantan na", "simple"); wordMap.put("fukuzatsu na", "complicated"); wordMap.put("tashika na", "sure"); wordMap.put("hontou no", "TRUE"); wordMap.put("usoano", "FALSE"); wordMap.put("saisho no", "first"); wordMap.put("saigo no", "last"); wordMap.put("tsugi no", "next"); wordMap.put("zenbu no", "all"); wordMap.put("maimai", "each time"); wordMap.put("yaku ni tatsu", "usefull"); wordMap.put("shizuka na", "quite"); wordMap.put("urusai", "noisy"); wordMap.put("meiwaku na", "troublesome"); wordMap.put("juubun na", "enough"); wordMap.put("tarinai", "lacking"); wordMap.put("ippai no", "full"); wordMap.put("isogashii", "busy"); wordMap.put("tadano", "free"); wordMap.put("sukoshi no", "a little bit"); wordMap.put("takusan no", "plenty"); wordMap.put("okane-mochi no", "rich"); wordMap.put("binboo na", "poor"); wordMap.put("onaka ga suita", "hungry"); wordMap.put("nodo ga kawaita", "thirsty"); wordMap.put("iya na", "nasty"); wordMap.put("daiji na", "important"); wordMap.put("marui", "round"); wordMap.put("nioi ga yoi", "a good smell"); wordMap.put("kusai", "bad odor"); wordMap.put("aoi", "blue"); wordMap.put("akai", "red"); wordMap.put("akarui", "light, bright"); wordMap.put("atatakai", "warm"); wordMap.put("atarashii", "new"); wordMap.put("atsui", "hot (air)"); wordMap.put("atsui", "thick"); wordMap.put("abunai", "dangerous"); wordMap.put("amai", "sweet"); wordMap.put("ii", "good"); wordMap.put("isogashii", "to be busy"); wordMap.put("itai", "to be painful"); wordMap.put("usui", "thin"); wordMap.put("oishii", "tasty, delicious"); wordMap.put("ookii", "big"); wordMap.put("osoi", "late, slow"); wordMap.put("omoi", "heavy"); wordMap.put("omoshiroi", "intersting, funny"); wordMap.put("karai", "hot, spicy"); wordMap.put("karui", "light (not heavy)"); wordMap.put("kawaii", "cute, pretty"); wordMap.put("kiiroi", "yellow"); wordMap.put("kitanai", "dirty"); wordMap.put("kurai", "dark"); wordMap.put("kuroi", "black"); wordMap.put("samui", "cold"); wordMap.put("shiroi", "white"); wordMap.put("suzushii", "cool"); wordMap.put("semai", "narrow"); wordMap.put("takai", "high, expensive"); wordMap.put("tanoshii", "pleasant, enjoyable"); wordMap.put("chiisai", "small"); wordMap.put("chikai", "near, close"); wordMap.put("tsumaranai", "uninteresting"); wordMap.put("tsumetai", "cold"); wordMap.put("tsuyoi", "strong"); wordMap.put("tooi", "far"); wordMap.put("nagai", "long"); wordMap.put("hayai", "early"); wordMap.put("hayai", "fast, quick"); wordMap.put("hikui", "low"); wordMap.put("hiroi", "wide, spacious"); wordMap.put("futoi", "thick, fat"); wordMap.put("furui", "old"); wordMap.put("hoshii", "to want something"); wordMap.put("hosoi", "thin, fine"); wordMap.put("mazui", "bad tasting"); wordMap.put("marui", "round"); wordMap.put("mijikai", "short"); wordMap.put("muzukashii", "difficult"); wordMap.put("yasashii", "gentle"); wordMap.put("yasui", "cheap"); wordMap.put("wakai", "young");
         return wordMap;
     }
@@ -221,4 +280,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         wordMap.put("ア", "A"); wordMap.put("イ", "I"); wordMap.put("ウ", "U"); wordMap.put("エ", "E"); wordMap.put("オ", "O"); wordMap.put("カ", "KA"); wordMap.put("ガ", "GA"); wordMap.put("キ", "KI"); wordMap.put("ギ", "GI"); wordMap.put("ク", "KU"); wordMap.put("グ", "GU"); wordMap.put("ケ", "KE"); wordMap.put("ゲ", "GE"); wordMap.put("コ", "KO"); wordMap.put("ゴ", "GO"); wordMap.put("サ", "SA"); wordMap.put("ザ", "ZA"); wordMap.put("シ", "SI"); wordMap.put("ジ", "ZI"); wordMap.put("ス", "SU"); wordMap.put("ズ", "ZU"); wordMap.put("セ", "SE"); wordMap.put("ゼ", "ZE"); wordMap.put("ソ", "SO"); wordMap.put("ゾ", "ZO"); wordMap.put("タ", "TA"); wordMap.put("ダ", "DA"); wordMap.put("チ", "CHI"); wordMap.put("ヂ", "DI"); wordMap.put("ツ", "TSU"); wordMap.put("ヅ", "DU"); wordMap.put("テ", "TE"); wordMap.put("デ", "DE"); wordMap.put("ト", "TO"); wordMap.put("ド", "DO"); wordMap.put("ナ", "NA"); wordMap.put("ニ", "NI"); wordMap.put("ヌ", "NU"); wordMap.put("ネ", "NE"); wordMap.put("ノ", "NO"); wordMap.put("ハ", "HA"); wordMap.put("バ", "BA"); wordMap.put("パ", "PA"); wordMap.put("ヒ", "HI"); wordMap.put("ビ", "BI"); wordMap.put("ピ", "PI"); wordMap.put("フ", "FU"); wordMap.put("ブ", "BU"); wordMap.put("プ", "PU"); wordMap.put("ヘ", "HE"); wordMap.put("ベ", "BE"); wordMap.put("ペ", "PE"); wordMap.put("ホ", "HO"); wordMap.put("ボ", "BO"); wordMap.put("ポ", "PO"); wordMap.put("マ", "MA"); wordMap.put("ミ", "MI"); wordMap.put("ム", "MU"); wordMap.put("メ", "ME"); wordMap.put("モ", "MO"); wordMap.put("ヤ", "YA"); wordMap.put("ユ", "YU"); wordMap.put("ヨ", "YO"); wordMap.put("ラ", "RA"); wordMap.put("リ", "RI"); wordMap.put("ル", "RU"); wordMap.put("レ", "RE"); wordMap.put("ロ", "RO"); wordMap.put("ワ", "WA"); wordMap.put("ヰ", "WI"); wordMap.put("ヱ", "WE"); wordMap.put("ヲ", "WO"); wordMap.put("ン", "N"); wordMap.put("ヴ", "VU");
         return wordMap;
     }
+
+// endregion
+
 }

@@ -73,6 +73,8 @@ public class MatchElementQuizFragment extends AbstractLearnerFragment implements
     public void onUserFinishMatching(Quiz quiz) {
         onUserAnswerAction(quiz);
         currentIndex++;
-        initializeCurrentQuiz();
+        if (currentIndex < mQuizArrayList.size()) {
+            initializeCurrentQuiz();
+        }
     }
 }

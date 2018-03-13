@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView android:id="@+id/finish_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Finish"
+        android:layout_marginTop="40dp"
+        android:textSize="35sp"
+        android:textAlignment="center"
+        />
+
+    <TextView android:id="@+id/result_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/finish_textview"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:text="35/40 good answers"
+        />
+
+    <RelativeLayout android:id="@+id/bad_answer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/result_textview"
+        android:layout_above="@+id/button_layout"
+        android:layout_margin="20dp">
+
+        <TextView android:id="@+id/bad_answer_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5 bad answers"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="30dp"
+        android:gravity="clip_horizontal|center"
+        >
+
+        <Button android:id="@+id/reset_all_button"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            style="@style/BlackButton"
+            android:text="Reset All"
+            />
+
+        <Button android:id="@+id/reset_bad_button"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            style="@style/BlackButton"
+            android:text="Reset Bad"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

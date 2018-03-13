@@ -33,7 +33,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
 
     ArrayList<Pair<String, String>> userAnswerArray;
 
-    static final int[] colorSelectionArray = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorThird};
+    static final int[] colorSelectionArray = new int[]{R.color.colorAccent, R.color.colorPrimary, R.color.colorAccentDark, R.color.colorPrimaryDark};
 
     private Quiz quiz;
     private MatchElementActionListener listener;
@@ -114,7 +114,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
     }
 
     private boolean userAnsweredEverything() {
-        if (userAnswerArray.size() >= quiz.questionArray.size()-1) {
+        if (userAnswerArray.size() >= quiz.questionArray.size()) {
             return true;
         }
         return false;

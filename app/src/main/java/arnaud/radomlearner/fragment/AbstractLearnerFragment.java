@@ -30,9 +30,9 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     private boolean revert = false;
     private int limit;
 
-    private HashSet<Quiz> mUserCorrectAnswerSet;
-    private HashSet<Quiz> mUserBadAnswerSet;
-    private ArrayList<Quiz> mQuizArrayList;
+    public HashSet<Quiz> mUserCorrectAnswerSet;
+    public HashSet<Quiz> mUserBadAnswerSet;
+    public ArrayList<Quiz> mQuizArrayList;
 
     public QuizzAnswerListener listener;
 
@@ -99,54 +99,10 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         mUserCorrectAnswerSet = new HashSet<>();
         mUserBadAnswerSet = new HashSet<>();
 
-        mQuizArrayList = new ArrayList<>();
-
         int numberOfQuestion = getNumberOfQuestion();
         int numberOfAnswer = getNumberOfAnswer();
 
-        ArrayList<String> keyArray = new ArrayList<>(wordMapGenerated.keySet());
-        while (keyArray.size() > 0 && wordMapGenerated.size() >= numberOfAnswer) {
-
-            int random = DataHelper.getRadomNumber(0, keyArray.size()-1);
-            String originalQuestion = keyArray.remove(random);
-            String originalAnswer = wordMapGenerated.get(originalQuestion);
-
-            Quiz quizzRow = new Quiz();
-            quizzRow.addQuestionAndAsnwer(originalQuestion, originalAnswer);
-
-            while (quizzRow.questionArray.size() < numberOfQuestion || quizzRow.answerArray.size() < numberOfAnswer) {
-            // Add Question
-                String answer = "";
-                String question = "";
-                if (keyArray.size() > 0) {
-                    int r = DataHelper.getRadomNumber(0, keyArray.size()-1);
-                    question = keyArray.get(r);
-                    answer = wordMapGenerated.get(question);
-                    if (numberOfQuestion > quizzRow.questionArray.size()) {
-                        keyArray.remove(r);
-                    }
-                }
-
-                if (mQuizArrayList.size() > 0 && (question.length() == 0 || quizzRow.questionAlreadyAdded(question))) {
-                    int r = DataHelper.getRadomNumber(0, mQuizArrayList.size()-1);
-                    Quiz row = mQuizArrayList.get(r);
-                    Pair<String, String> pair = row.getRandomCorrectPair();
-                    answer = revert ? pair.first : pair.second;
-                    question = revert ? pair.second : pair.first;
-                }
-
-                quizzRow.addQuestionAndAsnwer(question, answer);
-            }
-
-            if (revert) {
-                quizzRow.invertQuestionAnswer();
-            }
-            mQuizArrayList.add(quizzRow);
-
-            if (limit > 0 && mQuizArrayList.size() >= limit) {
-                break;
-            }
-        }
+        mQuizArrayList = Quiz.generateQuizArray(wordMapGenerated, numberOfQuestion, numberOfAnswer, revert, limit);
 
 //        for (Quiz q : mQuizArrayList) {
 //            Log.d("QUESTION", q.questionArray.get());
