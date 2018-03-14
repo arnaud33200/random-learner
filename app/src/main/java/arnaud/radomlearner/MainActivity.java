@@ -7,11 +7,13 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,10 +28,14 @@ import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
 import arnaud.radomlearner.UserPreference.DictType;
+import arnaud.radomlearner.helper.DataHelper;
 
 public class MainActivity extends AppCompatActivity implements QuizzAnswerListener, TwoSideSliderButtonView.SideSliderListener, FinalScoreFragment.FinalScoreActionListener {
 
     private AbstractLearnerFragment currentFragment;
+
+    private TextView screenTitle;
+    private TextView screenSubTitle;
 
     private RelativeLayout statusBarLayout;
     private Button revertButton;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     private int limit = -1;
 
     private TwoSideSliderButtonView twoSideSliderButtonView;
+    private Toolbar toolbar;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -47,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+    // TOOL BAR
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        screenTitle = findViewById(R.id.screen_title);
+        screenTitle.setText("Random Learner");
+        screenSubTitle = findViewById(R.id.screen_sub_title);
 
         statusBarLayout = findViewById(R.id.quizz_status_layout);
 
@@ -99,6 +113,14 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         currentFragment.setWordMap(wordMap, limit);
     }
 
+    @Override public void setTitle(int titleId) { /* Override to erase */ }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        super.setTitle("");
+        screenSubTitle.setText(title);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -128,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
     private void replaceCurrentFragment(AbstractLearnerFragment fragment) {
         HashMap<String, String> wordMap = null;
+
+        if (currentFragment != null && fragment.getClass() == currentFragment.getClass()) {
+            return; // already selected
+        }
+
         if (currentFragment != null) {
             wordMap = currentFragment.getWordMap();
         }
@@ -140,24 +167,39 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         fragment.setWordMap(wordMap, limit);
 
         changeFragmentContainer(currentFragment);
-        statusBarLayout.setVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
+        setStatusBarVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
     }
 
     private void displayFinalScoreFragment() {
-        statusBarLayout.setVisibility(View.GONE);
+        setStatusBarVisibility(View.GONE);
         FinalScoreFragment fragment = new FinalScoreFragment(this, currentFragment);
         changeFragmentContainer(fragment);
     }
 
     private void restoreOriginalScoreFragment() {
         changeFragmentContainer(currentFragment);
-        statusBarLayout.setVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
+        setStatusBarVisibility(currentFragment.needToDisplayTopStatusBar() ? View.VISIBLE : View.GONE);
     }
 
     private void changeFragmentContainer(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.body_contain_layout, fragment);
         transaction.commit();
+    }
+
+    private void setStatusBarVisibility(int visibility) {
+        statusBarLayout.setVisibility(visibility);
+
+        int height = (int) DataHelper.convertDpToPixel(100);
+        int bottomPadding = (int) DataHelper.convertDpToPixel(45);
+        if (visibility == View.GONE) {
+            bottomPadding = 0;
+            height = (int) DataHelper.convertDpToPixel(55);
+        }
+        toolbar.setPadding(0, 0, 0, bottomPadding);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) toolbar.getLayoutParams();
+        layoutParams.height = height;
+        toolbar.setLayoutParams(layoutParams);
     }
 
 // endregion

@@ -8,51 +8,89 @@
     android:background="@color/white"
     tools:context="arnaud.radomlearner.MainActivity">
 
+    <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:paddingBottom="45dp"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:title="Screen Title"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView android:id="@+id/screen_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SCREEN TITLE"
+                android:textSize="24dp"
+                />
+
+            <TextView android:id="@+id/screen_sub_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:alpha="0.7"
+                android:text="SCREEN SUBTITLE"
+                />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
     <RelativeLayout android:id="@+id/quizz_status_layout"
         android:layout_width="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_height="40dp"
+        android:elevation="4dp"
+        android:layout_marginBottom="5dp"
         >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
+            android:gravity="center"
             android:layout_marginLeft="10dp"
             >
 
             <Button android:id="@+id/reset_button"
-                android:layout_width="60dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:text="Reset"
-                android:textSize="8dp"
+                android:textSize="@dimen/status_bar_text"
                 />
 
             <Button android:id="@+id/revert_button"
-                android:layout_width="60dp"
+                android:layout_width="80dp"
                 android:layout_height="match_parent"
                 android:text="Revert"
-                android:textSize="8dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="@dimen/status_bar_text"
                 />
 
             <Button android:id="@+id/bad_button"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:text="bad"
-                android:textSize="8dp"
-                android:visibility="gone"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:text="bad"
+            android:textSize="8dp"
+            android:visibility="gone"
+            />
+
+            <arnaud.radomlearner.TwoSideSliderButtonView
+                android:id="@+id/switch_button"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                app:neutralColor="true"
                 />
 
         </LinearLayout>
-
-        <arnaud.radomlearner.TwoSideSliderButtonView
-            android:id="@+id/switch_button"
-            android:layout_width="120dp"
-            android:layout_height="30dp"
-            android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/status_text_view"
-            app:neutralColor="true"
-            />
 
         <TextView android:id="@+id/status_text_view"
             android:layout_width="wrap_content"
@@ -60,15 +98,9 @@
             android:layout_alignParentRight="true"
             android:text="12 / 56"
             android:lines="1"
+            android:textSize="18dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#BBBBBB"
-            android:layout_alignParentBottom="true"
             />
 
     </RelativeLayout>
@@ -76,7 +108,7 @@
     <FrameLayout android:id="@+id/body_contain_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/quizz_status_layout"
+        android:layout_below="@+id/toolbar"
         android:layout_above="@+id/button_layout"/>
 
     <LinearLayout android:id="@+id/button_layout"
