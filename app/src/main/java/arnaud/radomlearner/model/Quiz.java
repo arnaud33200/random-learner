@@ -149,6 +149,9 @@ public class Quiz {
 
     public static ArrayList<Quiz> generateQuizArray(HashMap<String, String> wordMapGenerated, int numberOfQuestion, int numberOfAnswer, boolean revert, int limit) {
         ArrayList<Quiz> mQuizArrayList = new ArrayList<>();
+        if (wordMapGenerated == null || wordMapGenerated.size() == 0) {
+            return mQuizArrayList;
+        }
 
         ArrayList<String> keyArray = new ArrayList<>(wordMapGenerated.keySet());
         while (keyArray.size() > 0 && wordMapGenerated.size() >= numberOfAnswer) {

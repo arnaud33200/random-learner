@@ -2,8 +2,8 @@ package arnaud.radomlearner;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+
+import arnaud.radomlearner.preference.UserPreference;
 
 /**
  * Created by arnaud on 2017/12/07.
