@@ -8,12 +8,10 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -210,10 +208,8 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
         return true;
     }
 
@@ -227,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         else if (item.getItemId() == R.id.hiragana_menu) { dictType = DictType.Hiragana; }
         else if (item.getItemId() == R.id.katana_menu_1) { dictType = DictType.KatakanaPart1; }
         else if (item.getItemId() == R.id.katana_menu_all) { dictType = DictType.KatakanaAll; }
+        else { return true; }
 
         UserPreference.getInstance().setCurrentSelectedDictType(dictType);
         initWordMapFromCurrentDictType();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Predicate;
 
 import arnaud.radomlearner.helper.DataHelper;
 
@@ -199,5 +200,17 @@ public class Quiz {
 //        }
 
         return mQuizArrayList;
+    }
+    public static Predicate<? super Quiz> getSearchPredicate(final String search) {
+        return new Predicate<Quiz>() {
+            @Override
+            public boolean test(Quiz quiz) {
+                if (quiz.firstQuestion.toLowerCase().contains(search.toLowerCase())
+                        || quiz.firstAnswer.toLowerCase().contains(search.toLowerCase())) {
+                    return false;
+                }
+                return true;
+            }
+        };
     }
 }

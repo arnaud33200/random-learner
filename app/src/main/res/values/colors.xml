@@ -19,4 +19,7 @@
     <color name="not_answer">#999999</color>
     <color name="correct_answer">#9dcf95</color>
     <color name="bad_answer">#d46570</color>
+
+    <color name="toolbar_text_color">#666666</color>
+
 </resources>

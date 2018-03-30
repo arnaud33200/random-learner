@@ -2,24 +2,39 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/adjective_menu"
-        android:title="ADJ"
-        />
+    <item
+        android:title="Dictionary"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_dictionary"
+        android:iconTint="@color/toolbar_text_color"
+        >
 
-    <item android:id="@+id/verb_menu"
-        android:title="VERB"
-        />
+        <menu>
 
-    <item android:id="@+id/hiragana_menu"
-        android:title="Hiranaga"
-        />
-    <item android:id="@+id/katana_menu_1"
-        android:title="Katakana part 1"
-        />
+            <item android:id="@+id/adjective_menu"
+                android:title="ADJ"
+                />
 
-    <item android:id="@+id/katana_menu_all"
-        android:title="Katakana all"
-        />
+            <item android:id="@+id/verb_menu"
+                android:title="VERB"
+                />
+
+            <item android:id="@+id/hiragana_menu"
+                android:title="Hiranaga"
+                />
+            <item android:id="@+id/katana_menu_1"
+                android:title="Katakana part 1"
+                />
+
+            <item android:id="@+id/katana_menu_all"
+                android:title="Katakana all"
+                />
+
+        </menu>
+
+    </item>
+
+
 
 
 </menu>
