@@ -1,9 +1,21 @@
 package arnaud.radomlearner.model;
 
+import android.app.Activity;
+import android.os.Environment;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import arnaud.radomlearner.R;
+import arnaud.radomlearner.RandomLearnerApp;
+import arnaud.radomlearner.helper.PermissionManager;
 import arnaud.radomlearner.model.DictType.HashMapCallBackInterface;
 
 import arnaud.radomlearner.preference.UserPreferenceItem;
@@ -111,7 +123,56 @@ public class QuizCollectionManager {
         currentDictType = new UserPreferenceItem(PREFERENCE_KEY_DICT_TYPE, getDefaultValue());
     }
 
+    public void checkLocalDirectory(final Activity activity) {
+        if (PermissionManager.hasGrantedPermission(PermissionManager.PermissionType.WriteStorage) == false) {
+            PermissionManager.checkPermissionAndDisplayIfNotGranted(activity, PermissionManager.PermissionType.WriteStorage,
+                    new PermissionManager.PermissionRequestListener() {
+                @Override
+                public void onRequestPermissionResult(boolean granted, int requestCode) {
+                    if (granted) {
+                        checkLocalDirectory(activity);
+                    }
+                }
+            });
+            return;
+        }
 
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + File.separator + RandomLearnerApp.getContext().getString(R.string.app_name));
+
+        if (mediaStorageDir.exists() == false) {
+            if (mediaStorageDir.mkdirs() == false) {
+                return; // impossible to check file
+            }
+        }
+
+        for (final File file : mediaStorageDir.listFiles()) {
+            String name = file.getName();
+            addDictType(new DictType(name, new HashMapCallBackInterface() {
+                @Override
+                public HashMap<String, String> getCollectionMap() {
+                    HashMap<String, String> wordMap = new HashMap<String, String>();
+                    try {
+                        FileInputStream fIn = new FileInputStream(file);
+                        BufferedReader myReader = new BufferedReader(new InputStreamReader(fIn));
+                        String aDataRow = "";
+                        while ((aDataRow = myReader.readLine()) != null) {
+                            String[] stringArray = aDataRow.split(";");
+                            if (stringArray.length >= 2) {
+                                wordMap.put(stringArray[0], stringArray[1]);
+                            }
+                        }
+                        myReader.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return wordMap;
+                }
+            }));
+
+        }
+
+
+    }
 
     private void addDictType(DictType dictType) {
         if (dictTypeHashMap == null) {

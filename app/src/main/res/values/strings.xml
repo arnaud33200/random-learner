@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Radom Learner</string>
+    <string name="permission_read_storage">Allow to read files?</string>
 </resources>

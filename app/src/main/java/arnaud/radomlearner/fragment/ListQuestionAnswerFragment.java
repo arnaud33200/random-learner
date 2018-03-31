@@ -86,6 +86,9 @@ public class ListQuestionAnswerFragment extends AbstractLearnerFragment implemen
 //            mAdapter = new ListAdapter();
 //        }
 
+        if (mQuizArrayList == null) {
+            mQuizArrayList = new ArrayList<>();
+        }
         ArrayList<Quiz> arrayList = new ArrayList<>(mQuizArrayList);
         if (search.length() > 0) {
             arrayList.removeIf(Quiz.getSearchPredicate(currentSearch));

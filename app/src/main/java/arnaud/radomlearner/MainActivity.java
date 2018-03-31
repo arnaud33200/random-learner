@@ -1,5 +1,6 @@
 package arnaud.radomlearner;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Build;
@@ -25,6 +26,7 @@ import arnaud.radomlearner.fragment.ListQuestionAnswerFragment;
 import arnaud.radomlearner.fragment.MatchElementQuizFragment;
 import arnaud.radomlearner.fragment.QuizzFragment;
 import arnaud.radomlearner.fragment.TopDownCardFragment;
+import arnaud.radomlearner.helper.PermissionManager;
 import arnaud.radomlearner.model.QuizCollectionManager;
 import arnaud.radomlearner.helper.DataHelper;
 
@@ -45,11 +47,14 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
     private TwoSideSliderButtonView twoSideSliderButtonView;
     private Toolbar toolbar;
+    private String flagOnResume;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        QuizCollectionManager.getInstance().checkLocalDirectory(this);
 
         setContentView(R.layout.activity_main);
 
@@ -106,6 +111,17 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         });
 
         initWordMapWithCurrentDict();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (flagOnResume == null) {
+            flagOnResume = "alreadyOnResumeOneTime";
+        }
+        else {
+            QuizCollectionManager.getInstance().checkLocalDirectory(this);
+        }
     }
 
     @Override public void setTitle(int titleId) { /* Override to erase */ }
@@ -279,8 +295,12 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionManager.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
 
-
-// endregion
+    // endregion
 
 }

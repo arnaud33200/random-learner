@@ -108,6 +108,10 @@ public class TopDownCardFragment extends AbstractLearnerFragment {
             return;
         }
 
+        if (currentIndex >= mQuizArrayList.size()) {
+            return;
+        }
+
         Quiz quiz = mQuizArrayList.get(currentIndex);
         Pair<String, String> correctPair = quiz.getFirsCorrectPair();
 

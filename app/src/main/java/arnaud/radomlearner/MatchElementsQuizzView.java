@@ -87,6 +87,7 @@ public class MatchElementsQuizzView extends RelativeLayout {
     }
 
     public void setCurrentQuiz(Quiz quiz) {
+        if (quiz == null) { return; }
         nextButton.setVisibility(GONE);
         topLinearLayout.setAlpha(1.0f);
         bottomLinearLayout.setAlpha(1.0f);
@@ -114,6 +115,9 @@ public class MatchElementsQuizzView extends RelativeLayout {
     }
 
     private boolean userAnsweredEverything() {
+        if (quiz == null) {
+            return true;
+        }
         if (userAnswerArray.size() >= quiz.questionArray.size()) {
             return true;
         }
