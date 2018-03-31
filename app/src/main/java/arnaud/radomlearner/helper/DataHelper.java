@@ -13,6 +13,10 @@ import arnaud.radomlearner.RandomLearnerApp;
 
 public class DataHelper {
 
+    public static boolean getRadomBoolean() {
+        return getRadomNumber(0, 1) == 1;
+    }
+
     public static int getRadomNumber(int min, int max) {
         if (max < 0) {
             return 0;

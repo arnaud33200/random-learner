@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     private RelativeLayout statusBarLayout;
     private Button revertButton;
     private Button resetButton;
-    private Button badButton;
+    private Button randomButton;
     private TextView statusTextView;
 
     private int limit = -1;
@@ -75,12 +75,10 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
             public void onClick(View view) { onStatusBarRevertButtonAction(); }
         });
 
-        badButton = findViewById(R.id.bad_button);
-        badButton.setOnClickListener(new View.OnClickListener() {
+        randomButton = findViewById(R.id.random_button);
+        randomButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                currentFragment.resetWithOnlyBadUserAnswer();
-            }
+            public void onClick(View view) { onStatusBarRandomButtonAction(); }
         });
 
         twoSideSliderButtonView = findViewById(R.id.switch_button);
@@ -244,6 +242,10 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
 
     private void onStatusBarRevertButtonAction() {
         currentFragment.swapQuestionAnswer();
+    }
+
+    private void onStatusBarRandomButtonAction() {
+        currentFragment.toggleRandomOption();
     }
 
     private void onStatusBarResetButtonCLickAction() {

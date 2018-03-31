@@ -58,22 +58,28 @@
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:gravity="center"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="12dp"
             >
 
             <Button android:id="@+id/reset_button"
-                android:layout_width="80dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:text="Reset"
-                android:textSize="@dimen/status_bar_text"
+                android:drawableRight="@drawable/ic_restart"
                 />
 
             <Button android:id="@+id/revert_button"
-                android:layout_width="80dp"
+                android:layout_width="50dp"
                 android:layout_height="match_parent"
-                android:text="Revert"
+                android:drawableRight="@drawable/ic_revert"
                 android:layout_marginLeft="10dp"
-                android:textSize="@dimen/status_bar_text"
+
+                />
+
+            <Button android:id="@+id/random_button"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:drawableRight="@drawable/ic_random"
+                android:layout_marginLeft="10dp"
                 />
 
             <Button android:id="@+id/bad_button"

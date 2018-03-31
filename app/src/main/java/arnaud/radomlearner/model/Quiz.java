@@ -147,7 +147,7 @@ public class Quiz {
         correctMap = newCorrectMap;
     }
 
-    public static ArrayList<Quiz> generateQuizArray(HashMap<String, String> wordMapGenerated, int numberOfQuestion, int numberOfAnswer, boolean revert, int limit) {
+    public static ArrayList<Quiz> generateQuizArray(HashMap<String, String> wordMapGenerated, int numberOfQuestion, int numberOfAnswer, boolean revert, boolean allRandom, int limit) {
         ArrayList<Quiz> mQuizArrayList = new ArrayList<>();
         if (wordMapGenerated == null || wordMapGenerated.size() == 0) {
             return mQuizArrayList;
@@ -187,7 +187,11 @@ public class Quiz {
                 quizzRow.addQuestionAndAsnwer(question, answer);
             }
 
-            if (revert) {
+            boolean shouldReverse = revert;
+            if (allRandom) {
+                shouldReverse = DataHelper.getRadomBoolean();
+            }
+            if (shouldReverse) {
                 quizzRow.invertQuestionAnswer();
             }
             mQuizArrayList.add(quizzRow);

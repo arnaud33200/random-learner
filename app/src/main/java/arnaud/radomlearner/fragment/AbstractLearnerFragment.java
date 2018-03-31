@@ -27,7 +27,10 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
     private static final int NUMBER_QUESTION_PER_EXERCISE = 30;
 
     private HashMap<String, String> wordMap;
-    private boolean revert = false;
+
+    private static boolean revert = false;
+    private static boolean random = false;
+
     private int limit;
 
     public HashSet<Quiz> mUserCorrectAnswerSet;
@@ -61,6 +64,11 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         ArrayList<Quiz> quizArrayList = generateQuizArray(wordMap);
         updateDisplayWithNewWordMap(quizArrayList);
         sendUserAnswerChanged();
+    }
+
+    public void toggleRandomOption() {
+        random = random == false;
+        resetQuizArray();
     }
 
     public void swapQuestionAnswer() {
@@ -102,7 +110,7 @@ public abstract class AbstractLearnerFragment extends Fragment implements UserAc
         int numberOfQuestion = getNumberOfQuestion();
         int numberOfAnswer = getNumberOfAnswer();
 
-        mQuizArrayList = Quiz.generateQuizArray(wordMapGenerated, numberOfQuestion, numberOfAnswer, revert, limit);
+        mQuizArrayList = Quiz.generateQuizArray(wordMapGenerated, numberOfQuestion, numberOfAnswer, revert, random, limit);
 
 //        for (Quiz q : mQuizArrayList) {
 //            Log.d("QUESTION", q.questionArray.get());

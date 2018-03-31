@@ -25,7 +25,6 @@ public class RandomLearnerApp extends Application {
         preference = context.getSharedPreferences("preference", 0);
     }
 
-
     public static SharedPreferences getPreference() {
         return sharedInstance.preference;
     }
