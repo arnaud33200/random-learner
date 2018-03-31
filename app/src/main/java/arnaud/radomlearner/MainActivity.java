@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import arnaud.radomlearner.action_interface.QuizzAnswerListener;
 import arnaud.radomlearner.fragment.AbstractLearnerFragment;
+import arnaud.radomlearner.fragment.DictSettingFragmentDialogFragment;
 import arnaud.radomlearner.fragment.FinalScoreFragment;
 import arnaud.radomlearner.fragment.ListQuestionAnswerFragment;
 import arnaud.radomlearner.fragment.MatchElementQuizFragment;
@@ -215,15 +216,17 @@ public class MainActivity extends AppCompatActivity implements QuizzAnswerListen
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
 
-        String key = "";
-        if (item.getItemId() == R.id.adjective_menu) { QuizCollectionManager.getInstance().setCurrentCollectionForIndex(1); }
-        else if (item.getItemId() == R.id.verb_menu) { QuizCollectionManager.getInstance().setCurrentCollectionForIndex(4); }
-        else if (item.getItemId() == R.id.hiragana_menu) { QuizCollectionManager.getInstance().setCurrentCollectionForIndex(2); }
-        else if (item.getItemId() == R.id.katana_menu_1) { QuizCollectionManager.getInstance().setCurrentCollectionForIndex(0); }
-        else if (item.getItemId() == R.id.katana_menu_all) { QuizCollectionManager.getInstance().setCurrentCollectionForIndex(3); }
-        else { return true; }
+        if (item.getItemId() != R.id.dict_option) {
+            return false;
+        }
 
-        initWordMapWithCurrentDict();
+        DictSettingFragmentDialogFragment fragment = new DictSettingFragmentDialogFragment();
+        fragment.show(currentFragment.getFragmentManager(), new Runnable() {
+
+            @Override public void run() {
+                initWordMapWithCurrentDict();
+            }
+        });
         return true;
     }
 

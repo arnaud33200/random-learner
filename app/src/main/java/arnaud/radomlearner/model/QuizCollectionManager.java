@@ -15,9 +15,7 @@ import static arnaud.radomlearner.preference.UserPreference.PREFERENCE_KEY_DICT_
 public class QuizCollectionManager {
 
     private final PreferenceStringItem currentDictType;
-
     private HashMap<String, DictType> dictTypeHashMap;
-    private HashSet<String> selectedKeyArray;
 
     public interface HashMapCallBackInterface {
         HashMap<String, String> getCollectionMap();
@@ -39,6 +37,24 @@ public class QuizCollectionManager {
             this.keyId = (subType.length() > 0 ? mainType + "_" + subType : mainType).toLowerCase();
             this.hashMapCallBack = hashMapCallBack;
         }
+
+        public String getFullTitle() {
+            return mainType + " " + subType;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof DictType == false) {
+                return super.equals(obj);
+            }
+            DictType dictType = (DictType) obj;
+            return (this.keyId.equals(dictType.keyId));
+        }
+
+        public boolean isCurrentlySelected() {
+            DictType currentDictType = QuizCollectionManager.getInstance().getCurrentDictType();
+            return this.equals(currentDictType);
+        }
     }
 
     private static QuizCollectionManager instance;
@@ -51,7 +67,6 @@ public class QuizCollectionManager {
 
     private QuizCollectionManager() {
         super();
-        selectedKeyArray = new HashSet<>();
 
     // Adjective
         addDictType(new DictType("Adjective", new HashMapCallBackInterface() {
@@ -115,6 +130,10 @@ public class QuizCollectionManager {
         currentDictType.setStringValue(key);
     }
 
+    public void setCurrentDictType(DictType dictType) {
+        currentDictType.setStringValue(dictType.keyId);
+    }
+
     public DictType getCurrentDictType() {
         String key = currentDictType.getStringValue();
         DictType dictType = dictTypeHashMap.get(key);
@@ -136,6 +155,24 @@ public class QuizCollectionManager {
 
     public String generateSubTitle() {
         DictType dictType = getCurrentDictType();
-        return dictType.mainType + " " + dictType.subType;
+        return dictType.getFullTitle();
     }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// region DICT ARRAY
+
+    public int getDictCount() {
+        return dictTypeHashMap.size();
+    }
+
+    public ArrayList<DictType> getDictTypeArray() {
+        ArrayList<DictType> array = new ArrayList<DictType>();
+        for (DictType dictType : dictTypeHashMap.values()) {
+            array.add(dictType);
+        }
+        return array;
+    }
+
+// endregion
+
 }
