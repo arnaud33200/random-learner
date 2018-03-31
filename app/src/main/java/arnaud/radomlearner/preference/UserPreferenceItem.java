@@ -33,10 +33,10 @@ public class UserPreferenceItem<T extends Serializable> {
     public T getValue() {
         if (value == null) {
             String stringValue = RandomLearnerApp.getPreference().getString(key, "");
-            value = (T) deserialize(stringValue);
-            if (value == null) {
-                setValue(defaultValue);
-            }
+            value = deserialize(stringValue);
+        }
+        if (value == null) {
+            setValue(defaultValue);
         }
         return value;
     }

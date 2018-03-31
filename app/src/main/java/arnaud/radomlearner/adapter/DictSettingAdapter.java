@@ -44,7 +44,7 @@ public class DictSettingAdapter extends RecyclerView.Adapter<DictSettingViewHold
 
     @Override
     public void dictTypeRowClickAction(QuizCollectionManager.DictType dictType) {
-        QuizCollectionManager.getInstance().setCurrentDictType(dictType);
+        QuizCollectionManager.getInstance().toggleSelectionDictType(dictType);
         notifyDataSetChanged();
     }
 }

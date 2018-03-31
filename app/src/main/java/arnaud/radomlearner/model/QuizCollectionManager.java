@@ -2,6 +2,7 @@ package arnaud.radomlearner.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import arnaud.radomlearner.preference.UserPreferenceItem;
 
@@ -13,7 +14,7 @@ import static arnaud.radomlearner.preference.UserPreferenceItem.PREFERENCE_KEY_D
 
 public class QuizCollectionManager {
 
-    private final UserPreferenceItem<String> currentDictType;
+    private final UserPreferenceItem<HashSet<String>> currentDictType;
     private HashMap<String, DictType> dictTypeHashMap;
 
     public interface HashMapCallBackInterface {
@@ -51,9 +52,13 @@ public class QuizCollectionManager {
         }
 
         public boolean isCurrentlySelected() {
-            DictType currentDictType = QuizCollectionManager.getInstance().getCurrentDictType();
-            return this.equals(currentDictType);
+            return QuizCollectionManager.getInstance().isDictTypeSelected(this);
         }
+    }
+
+    private boolean isDictTypeSelected(DictType dictType) {
+        HashSet<String> hashSet = getUserSelectionHashSet();
+        return hashSet.contains(dictType.keyId);
     }
 
     private static QuizCollectionManager instance;
@@ -113,9 +118,10 @@ public class QuizCollectionManager {
             }
         }));
 
-        String firstKey = dictTypeHashMap.keySet().iterator().next();
-        currentDictType = new UserPreferenceItem(PREFERENCE_KEY_DICT_TYPE, firstKey);
+        currentDictType = new UserPreferenceItem(PREFERENCE_KEY_DICT_TYPE, getDefaultValue());
     }
+
+
 
     private void addDictType(DictType dictType) {
         if (dictTypeHashMap == null) {
@@ -124,45 +130,59 @@ public class QuizCollectionManager {
         dictTypeHashMap.put(dictType.keyId, dictType);
     }
 
-    public void setCurrentCollectionForIndex(int index) {
-        String key = (String) dictTypeHashMap.keySet().toArray()[index];
-        currentDictType.setValue(key);
+    private HashSet<String> getDefaultValue() {
+        String firstKey = dictTypeHashMap.keySet().iterator().next();
+        HashSet<String> keyArray = new HashSet<>(); keyArray.add(firstKey);
+        return keyArray;
     }
 
-    public void setCurrentDictType(DictType dictType) {
-        currentDictType.setValue(dictType.keyId);
-    }
-
-    public DictType getCurrentDictType() {
-        String key = currentDictType.getValue();
-        DictType dictType = dictTypeHashMap.get(key);
-        if (dictType == null) {
-            setCurrentCollectionForIndex(0);
-            return getCurrentDictType();
+    private HashSet<String> getUserSelectionHashSet() {
+        HashSet<String> hashSet = null;
+        try { hashSet = currentDictType.getValue(); }
+        catch (Exception e) { }
+        if (hashSet == null) {
+            hashSet = getDefaultValue();
         }
-        return dictType;
+        return hashSet;
+    }
+
+    public void toggleSelectionDictType(DictType dictType) {
+        HashSet<String> hashSet = getUserSelectionHashSet();
+        String key = dictType.keyId;
+        if (hashSet.contains(key)) {
+            hashSet.remove(key);
+        } else {
+            hashSet.add(key);
+        }
+        currentDictType.setValue(hashSet);
     }
 
     public HashMap<String, String> getCurrentCollection() {
-        DictType dictType = getCurrentDictType();
-        return getCollection(dictType);
-    }
-
-    public HashMap<String, String> getCollection(DictType dictType) {
-        return dictType.hashMapCallBack.getCollectionMap();
+        HashSet<String> hashSet = getUserSelectionHashSet();
+        HashMap<String, String> collection = new HashMap<>();
+        for (String key : hashSet) {
+            DictType dictType = dictTypeHashMap.get(key);
+            if (dictType != null) {
+                collection.putAll(dictType.hashMapCallBack.getCollectionMap());
+            }
+        }
+        return collection;
     }
 
     public String generateSubTitle() {
-        DictType dictType = getCurrentDictType();
-        return dictType.getFullTitle();
+        String title = "";
+        HashSet<String> hashSet = getUserSelectionHashSet();
+        for (String key : hashSet) {
+            DictType dictType = dictTypeHashMap.get(key);
+            if (dictType != null) {
+                title = title.length() == 0 ? dictType.getFullTitle() : title + " + " + dictType.getFullTitle();
+            }
+        }
+        return title;
     }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // region DICT ARRAY
-
-    public int getDictCount() {
-        return dictTypeHashMap.size();
-    }
 
     public ArrayList<DictType> getDictTypeArray() {
         ArrayList<DictType> array = new ArrayList<DictType>();
