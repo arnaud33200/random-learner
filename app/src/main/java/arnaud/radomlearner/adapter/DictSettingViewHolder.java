@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import arnaud.radomlearner.R;
+import arnaud.radomlearner.model.DictType;
 import arnaud.radomlearner.model.QuizCollectionManager;
 
 /**
@@ -17,12 +18,12 @@ public class DictSettingViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView mTextView;
     private final ImageView mSelectImageView;
-    private QuizCollectionManager.DictType mDict;
+    private DictType mDict;
 
     private ClickListener clickListener;
 
     public interface ClickListener {
-        void dictTypeRowClickAction(QuizCollectionManager.DictType dictType);
+        void dictTypeRowClickAction(DictType dictType);
     }
 
     public DictSettingViewHolder(View itemView) {
@@ -41,7 +42,7 @@ public class DictSettingViewHolder extends RecyclerView.ViewHolder {
     }
 
     @SuppressLint("NewApi")
-    public void setDictType(QuizCollectionManager.DictType dictType) {
+    public void setDictType(DictType dictType) {
         mDict = dictType;
         mTextView.setText(dictType.getFullTitle());
         if (dictType.isCurrentlySelected()) {

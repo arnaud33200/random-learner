@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import arnaud.radomlearner.R;
+import arnaud.radomlearner.model.DictType;
 import arnaud.radomlearner.model.QuizCollectionManager;
 
 /**
@@ -16,7 +17,7 @@ import arnaud.radomlearner.model.QuizCollectionManager;
 
 public class DictSettingAdapter extends RecyclerView.Adapter<DictSettingViewHolder> implements DictSettingViewHolder.ClickListener {
 
-    final ArrayList<QuizCollectionManager.DictType> dictTypeArrayList;
+    final ArrayList<DictType> dictTypeArrayList;
 
     public DictSettingAdapter() {
         super();
@@ -33,7 +34,7 @@ public class DictSettingAdapter extends RecyclerView.Adapter<DictSettingViewHold
 
     @Override
     public void onBindViewHolder(DictSettingViewHolder holder, int position) {
-        QuizCollectionManager.DictType dictType = dictTypeArrayList.get(position);
+        DictType dictType = dictTypeArrayList.get(position);
         holder.setDictType(dictType);
     }
 
@@ -43,7 +44,7 @@ public class DictSettingAdapter extends RecyclerView.Adapter<DictSettingViewHold
     }
 
     @Override
-    public void dictTypeRowClickAction(QuizCollectionManager.DictType dictType) {
+    public void dictTypeRowClickAction(DictType dictType) {
         QuizCollectionManager.getInstance().toggleSelectionDictType(dictType);
         notifyDataSetChanged();
     }

@@ -1,8 +1,10 @@
 package arnaud.radomlearner.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import arnaud.radomlearner.model.DictType.HashMapCallBackInterface;
 
 import arnaud.radomlearner.preference.UserPreferenceItem;
 
@@ -17,46 +19,7 @@ public class QuizCollectionManager {
     private final UserPreferenceItem<HashSet<String>> currentDictType;
     private HashMap<String, DictType> dictTypeHashMap;
 
-    public interface HashMapCallBackInterface {
-        HashMap<String, String> getCollectionMap();
-    }
-
-    public class DictType {
-        public final String mainType;
-        public final String subType;
-        public final String keyId;
-        public final HashMapCallBackInterface hashMapCallBack;
-
-        public DictType(String mainType, HashMapCallBackInterface hashMapCallBack) {
-            this(mainType, "", hashMapCallBack);
-        }
-
-        public DictType(String mainType, String subType, HashMapCallBackInterface hashMapCallBack) {
-            this.mainType = mainType;
-            this.subType = subType;
-            this.keyId = (subType.length() > 0 ? mainType + "_" + subType : mainType).toLowerCase();
-            this.hashMapCallBack = hashMapCallBack;
-        }
-
-        public String getFullTitle() {
-            return mainType + " " + subType;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof DictType == false) {
-                return super.equals(obj);
-            }
-            DictType dictType = (DictType) obj;
-            return (this.keyId.equals(dictType.keyId));
-        }
-
-        public boolean isCurrentlySelected() {
-            return QuizCollectionManager.getInstance().isDictTypeSelected(this);
-        }
-    }
-
-    private boolean isDictTypeSelected(DictType dictType) {
+    public boolean isDictTypeSelected(DictType dictType) {
         HashSet<String> hashSet = getUserSelectionHashSet();
         return hashSet.contains(dictType.keyId);
     }
@@ -91,11 +54,29 @@ public class QuizCollectionManager {
             }
         }));
 
-        addDictType(new DictType("Hiragana", new HashMapCallBackInterface() {
+        addDictType(new DictType("Hiragana", "Basic", new HashMapCallBackInterface() {
             @Override
             public HashMap<String, String> getCollectionMap() {
                 HashMap<String, String> wordMap = new HashMap<String, String>();
-                wordMap.put("あ", "A"); wordMap.put("い", "I"); wordMap.put("う", "U"); wordMap.put("え", "E"); wordMap.put("お", "O"); wordMap.put("か", "KA"); wordMap.put("が", "GA"); wordMap.put("き", "KI"); wordMap.put("ぎ", "GI"); wordMap.put("く", "KU"); wordMap.put("ぐ", "GU"); wordMap.put("け", "KE"); wordMap.put("げ", "GE"); wordMap.put("こ", "KO"); wordMap.put("ご", "GO"); wordMap.put("さ", "SA"); wordMap.put("ざ", "ZA"); wordMap.put("し", "SI"); wordMap.put("じ", "ZI"); wordMap.put("す", "SU"); wordMap.put("ず", "ZU"); wordMap.put("せ", "SE"); wordMap.put("ぜ", "ZE"); wordMap.put("そ", "SO"); wordMap.put("ぞ", "ZO"); wordMap.put("た", "TA"); wordMap.put("だ", "DA"); wordMap.put("ち", "CHI"); wordMap.put("ぢ", "DI"); wordMap.put("つ", "TSU"); wordMap.put("づ", "DU"); wordMap.put("て", "TE"); wordMap.put("で", "DE"); wordMap.put("と", "TO"); wordMap.put("ど", "DO"); wordMap.put("な", "NA"); wordMap.put("に", "NI"); wordMap.put("ぬ", "NU"); wordMap.put("ね", "NE"); wordMap.put("の", "NO"); wordMap.put("は", "HA"); wordMap.put("ば", "BA"); wordMap.put("ぱ", "PA"); wordMap.put("ひ", "HI"); wordMap.put("び", "BI"); wordMap.put("ぴ", "PI"); wordMap.put("ふ", "FU"); wordMap.put("ぶ", "BU"); wordMap.put("ぷ", "PU"); wordMap.put("へ", "HE"); wordMap.put("べ", "BE"); wordMap.put("ぺ", "PE"); wordMap.put("ほ", "HO"); wordMap.put("ぼ", "BO"); wordMap.put("ぽ", "PO"); wordMap.put("ま", "MA"); wordMap.put("み", "MI"); wordMap.put("む", "MU"); wordMap.put("め", "ME"); wordMap.put("も", "MO"); wordMap.put("や", "YA"); wordMap.put("ゆ", "YU"); wordMap.put("よ", "YO"); wordMap.put("ら", "RA"); wordMap.put("り", "RI"); wordMap.put("る", "RU"); wordMap.put("れ", "RE"); wordMap.put("ろ", "RO"); wordMap.put("わ", "WA"); wordMap.put("ゐ", "WI"); wordMap.put("ゑ", "WE"); wordMap.put("を", "WO"); wordMap.put("ん", "N");
+                wordMap.put("あ", "A"); wordMap.put("い", "I"); wordMap.put("う", "U"); wordMap.put("え", "E"); wordMap.put("お", "O"); wordMap.put("か", "KA"); wordMap.put("き", "KI"); wordMap.put("く", "KU"); wordMap.put("け", "KE"); wordMap.put("こ", "KO"); wordMap.put("さ", "SA"); wordMap.put("し", "SHI"); wordMap.put("す", "SU"); wordMap.put("せ", "SE"); wordMap.put("そ", "SO"); wordMap.put("た", "TA"); wordMap.put("ち", "CHI"); wordMap.put("つ", "TSU"); wordMap.put("て", "TE"); wordMap.put("と", "TO"); wordMap.put("な", "NA"); wordMap.put("に", "NI"); wordMap.put("ぬ", "NU"); wordMap.put("ね", "NE"); wordMap.put("の", "NO"); wordMap.put("は", "HA"); wordMap.put("ひ", "HI"); wordMap.put("ふ", "FU"); wordMap.put("へ", "HE"); wordMap.put("ほ", "HO"); wordMap.put("ま", "MA"); wordMap.put("み", "MI"); wordMap.put("む", "MU"); wordMap.put("め", "ME"); wordMap.put("も", "MO"); wordMap.put("や", "YA"); wordMap.put("ゆ", "YU"); wordMap.put("よ", "YO"); wordMap.put("ら", "RA"); wordMap.put("り", "RI"); wordMap.put("る", "RU"); wordMap.put("れ", "RE"); wordMap.put("ろ", "RO"); wordMap.put("わ", "WA"); wordMap.put("を", "WO"); wordMap.put("ん", "N");
+                return wordMap;
+            }
+        }));
+
+        addDictType(new DictType("Hiragana", "Combination", new HashMapCallBackInterface() {
+            @Override
+            public HashMap<String, String> getCollectionMap() {
+                HashMap<String, String> wordMap = new HashMap<String, String>();
+                wordMap.put("きゃ", "KYA"); wordMap.put("きゅ", "KYU"); wordMap.put("きょ", "KYO"); wordMap.put("しゃ", "SHA"); wordMap.put("しゅ", "SHU"); wordMap.put("しょ", "SHO"); wordMap.put("ちゃ", "CHA"); wordMap.put("ちゅ", "CHU"); wordMap.put("ちょ", "CHO"); wordMap.put("にゃ", "NYA"); wordMap.put("にゅ", "NYU"); wordMap.put("にょ", "NYO"); wordMap.put("ひゃ", "HYA"); wordMap.put("ひゅ", "HYU"); wordMap.put("ひょ", "HYO"); wordMap.put("みゃ", "MYA"); wordMap.put("みゅ", "MYU"); wordMap.put("みょ", "MYO"); wordMap.put("りゃ", "RYA"); wordMap.put("りゅ", "RYU"); wordMap.put("りょ", "RYO"); wordMap.put("ぎゃ", "GYA"); wordMap.put("ぎゅ", "GYU"); wordMap.put("ぎょ", "GYO"); wordMap.put("じゃ", "JA"); wordMap.put("じゅ", "JU"); wordMap.put("じょ", "JO"); wordMap.put("びゃ", "BYA"); wordMap.put("びゅ", "BYU"); wordMap.put("びょ", "BYO"); wordMap.put("ぴゃ", "PYA"); wordMap.put("ぴゅ", "PYU"); wordMap.put("ぴょ", "PYO");
+                return wordMap;
+            }
+        }));
+
+        addDictType(new DictType("Hiragana", "Accent", new HashMapCallBackInterface() {
+            @Override
+            public HashMap<String, String> getCollectionMap() {
+                HashMap<String, String> wordMap = new HashMap<String, String>();
+                wordMap.put("が", "GA"); wordMap.put("ぎ", "GI"); wordMap.put("ぐ", "GU"); wordMap.put("げ", "GE"); wordMap.put("ご", "GO"); wordMap.put("ざ", "ZA"); wordMap.put("じ", "JI"); wordMap.put("ず", "ZU"); wordMap.put("ぜ", "ZE"); wordMap.put("ぞ", "ZO"); wordMap.put("だ", "DA"); wordMap.put("ぢ", "DI"); wordMap.put("づ", "DU"); wordMap.put("で", "DE"); wordMap.put("ど", "DO"); wordMap.put("ば", "BA"); wordMap.put("ぱ", "PA"); wordMap.put("び", "BI"); wordMap.put("ぴ", "PI"); wordMap.put("ぶ", "BU"); wordMap.put("ぷ", "PU"); wordMap.put("べ", "BE"); wordMap.put("ぺ", "PE"); wordMap.put("ぼ", "BO"); wordMap.put("ぽ", "PO"); wordMap.put("ゐ", "WI"); wordMap.put("ゑ", "WE");
                 return wordMap;
             }
         }));
@@ -109,11 +90,20 @@ public class QuizCollectionManager {
             }
         }));
 
-        addDictType(new DictType("Katana", "All", new HashMapCallBackInterface() {
+        addDictType(new DictType("Katana", "Accent", new HashMapCallBackInterface() {
             @Override
             public HashMap<String, String> getCollectionMap() {
                 HashMap<String, String> wordMap = new HashMap<String, String>();
-                wordMap.put("ア", "A"); wordMap.put("イ", "I"); wordMap.put("ウ", "U"); wordMap.put("エ", "E"); wordMap.put("オ", "O"); wordMap.put("カ", "KA"); wordMap.put("ガ", "GA"); wordMap.put("キ", "KI"); wordMap.put("ギ", "GI"); wordMap.put("ク", "KU"); wordMap.put("グ", "GU"); wordMap.put("ケ", "KE"); wordMap.put("ゲ", "GE"); wordMap.put("コ", "KO"); wordMap.put("ゴ", "GO"); wordMap.put("サ", "SA"); wordMap.put("ザ", "ZA"); wordMap.put("シ", "SI"); wordMap.put("ジ", "ZI"); wordMap.put("ス", "SU"); wordMap.put("ズ", "ZU"); wordMap.put("セ", "SE"); wordMap.put("ゼ", "ZE"); wordMap.put("ソ", "SO"); wordMap.put("ゾ", "ZO"); wordMap.put("タ", "TA"); wordMap.put("ダ", "DA"); wordMap.put("チ", "CHI"); wordMap.put("ヂ", "DI"); wordMap.put("ツ", "TSU"); wordMap.put("ヅ", "DU"); wordMap.put("テ", "TE"); wordMap.put("デ", "DE"); wordMap.put("ト", "TO"); wordMap.put("ド", "DO"); wordMap.put("ナ", "NA"); wordMap.put("ニ", "NI"); wordMap.put("ヌ", "NU"); wordMap.put("ネ", "NE"); wordMap.put("ノ", "NO"); wordMap.put("ハ", "HA"); wordMap.put("バ", "BA"); wordMap.put("パ", "PA"); wordMap.put("ヒ", "HI"); wordMap.put("ビ", "BI"); wordMap.put("ピ", "PI"); wordMap.put("フ", "FU"); wordMap.put("ブ", "BU"); wordMap.put("プ", "PU"); wordMap.put("ヘ", "HE"); wordMap.put("ベ", "BE"); wordMap.put("ペ", "PE"); wordMap.put("ホ", "HO"); wordMap.put("ボ", "BO"); wordMap.put("ポ", "PO"); wordMap.put("マ", "MA"); wordMap.put("ミ", "MI"); wordMap.put("ム", "MU"); wordMap.put("メ", "ME"); wordMap.put("モ", "MO"); wordMap.put("ヤ", "YA"); wordMap.put("ユ", "YU"); wordMap.put("ヨ", "YO"); wordMap.put("ラ", "RA"); wordMap.put("リ", "RI"); wordMap.put("ル", "RU"); wordMap.put("レ", "RE"); wordMap.put("ロ", "RO"); wordMap.put("ワ", "WA"); wordMap.put("ヰ", "WI"); wordMap.put("ヱ", "WE"); wordMap.put("ヲ", "WO"); wordMap.put("ン", "N"); wordMap.put("ヴ", "VU");
+                wordMap.put("ガ", "GA"); wordMap.put("ギ", "GI"); wordMap.put("グ", "GU"); wordMap.put("ゲ", "GE"); wordMap.put("ゴ", "GO"); wordMap.put("ザ", "ZA"); wordMap.put("ジ", "JI"); wordMap.put("ズ", "ZU"); wordMap.put("ゼ", "ZE"); wordMap.put("ゾ", "ZO"); wordMap.put("ダ", "DA"); wordMap.put("ヂ", "DI"); wordMap.put("ヅ", "DU"); wordMap.put("デ", "DE"); wordMap.put("ド", "DO"); wordMap.put("バ", "BA"); wordMap.put("パ", "PA"); wordMap.put("ビ", "BI"); wordMap.put("ピ", "PI"); wordMap.put("ブ", "BU"); wordMap.put("プ", "PU"); wordMap.put("ベ", "BE"); wordMap.put("ペ", "PE"); wordMap.put("ボ", "BO"); wordMap.put("ポ", "PO"); wordMap.put("ヴ", "VU");
+                return wordMap;
+            }
+        }));
+
+        addDictType(new DictType("Katana", "Combination", new HashMapCallBackInterface() {
+            @Override
+            public HashMap<String, String> getCollectionMap() {
+                HashMap<String, String> wordMap = new HashMap<String, String>();
+                wordMap.put("キャ", "KYA"); wordMap.put("キュ", "KYU"); wordMap.put("キョ", "KYO"); wordMap.put("シャ", "SHA"); wordMap.put("シュ", "SHU"); wordMap.put("ショ", "SHO"); wordMap.put("チャ", "CHA"); wordMap.put("チュ", "CHU"); wordMap.put("チョ", "CHO"); wordMap.put("ニャ", "NYA"); wordMap.put("ニュ", "NYU"); wordMap.put("ニョ", "NYO"); wordMap.put("ヒャ", "HYA"); wordMap.put("ヒュ", "HYU"); wordMap.put("ヒョ", "HYO"); wordMap.put("ミャ", "MYA"); wordMap.put("ミュ", "MYU"); wordMap.put("ミョ", "MYO"); wordMap.put("リャ", "RYA"); wordMap.put("リュ", "RYU"); wordMap.put("リョ", "RYO"); wordMap.put("ギャ", "GYA"); wordMap.put("ギュ", "GYU"); wordMap.put("ギョ", "GYO"); wordMap.put("ジャ", "JA"); wordMap.put("ジュ", "JU"); wordMap.put("ジョ", "JO"); wordMap.put("ビャ", "BYA"); wordMap.put("ビュ", "BYU"); wordMap.put("ビョ", "BYO"); wordMap.put("ピャ", "PYA"); wordMap.put("ピュ", "PYU"); wordMap.put("ピョ", "PYO");
                 return wordMap;
             }
         }));
@@ -189,6 +179,7 @@ public class QuizCollectionManager {
         for (DictType dictType : dictTypeHashMap.values()) {
             array.add(dictType);
         }
+        Collections.sort(array);
         return array;
     }
 
