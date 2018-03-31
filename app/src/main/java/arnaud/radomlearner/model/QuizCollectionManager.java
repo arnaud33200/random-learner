@@ -2,11 +2,10 @@ package arnaud.radomlearner.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
-import arnaud.radomlearner.preference.PreferenceStringItem;
+import arnaud.radomlearner.preference.UserPreferenceItem;
 
-import static arnaud.radomlearner.preference.UserPreference.PREFERENCE_KEY_DICT_TYPE;
+import static arnaud.radomlearner.preference.UserPreferenceItem.PREFERENCE_KEY_DICT_TYPE;
 
 /**
  * Created by arnaud on 2018/03/30.
@@ -14,7 +13,7 @@ import static arnaud.radomlearner.preference.UserPreference.PREFERENCE_KEY_DICT_
 
 public class QuizCollectionManager {
 
-    private final PreferenceStringItem currentDictType;
+    private final UserPreferenceItem<String> currentDictType;
     private HashMap<String, DictType> dictTypeHashMap;
 
     public interface HashMapCallBackInterface {
@@ -115,7 +114,7 @@ public class QuizCollectionManager {
         }));
 
         String firstKey = dictTypeHashMap.keySet().iterator().next();
-        currentDictType = new PreferenceStringItem(PREFERENCE_KEY_DICT_TYPE, firstKey);
+        currentDictType = new UserPreferenceItem(PREFERENCE_KEY_DICT_TYPE, firstKey);
     }
 
     private void addDictType(DictType dictType) {
@@ -127,15 +126,15 @@ public class QuizCollectionManager {
 
     public void setCurrentCollectionForIndex(int index) {
         String key = (String) dictTypeHashMap.keySet().toArray()[index];
-        currentDictType.setStringValue(key);
+        currentDictType.setValue(key);
     }
 
     public void setCurrentDictType(DictType dictType) {
-        currentDictType.setStringValue(dictType.keyId);
+        currentDictType.setValue(dictType.keyId);
     }
 
     public DictType getCurrentDictType() {
-        String key = currentDictType.getStringValue();
+        String key = currentDictType.getValue();
         DictType dictType = dictTypeHashMap.get(key);
         if (dictType == null) {
             setCurrentCollectionForIndex(0);
